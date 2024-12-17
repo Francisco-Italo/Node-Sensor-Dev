@@ -9,6 +9,8 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./main.obj" \
+"./i2c/i2c.obj" \
+"./i2c/sensors.obj" \
 "../lnk_msp430fr2433.cmd" \
 $(GEN_CMDS__FLAG) \
 -llibmath.a \
@@ -22,7 +24,9 @@ RMDIR := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
+-include i2c/subdir_vars.mk
 -include subdir_rules.mk
+-include i2c/subdir_rules.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -140,8 +144,8 @@ I2C_interface.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" 
-	-$(RM) "main.d" 
+	-$(RM) "main.obj" "i2c/i2c.obj" "i2c/sensors.obj" 
+	-$(RM) "main.d" "i2c/i2c.d" "i2c/sensors.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

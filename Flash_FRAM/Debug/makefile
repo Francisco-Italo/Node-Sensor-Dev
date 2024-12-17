@@ -9,6 +9,9 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./main.obj" \
+"./clk/clk.obj" \
+"./fram/fram.obj" \
+"./uart/uart.obj" \
 "../lnk_msp430fr2433.cmd" \
 $(GEN_CMDS__FLAG) \
 -llibmath.a \
@@ -22,7 +25,13 @@ RMDIR := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
+-include clk/subdir_vars.mk
+-include fram/subdir_vars.mk
+-include uart/subdir_vars.mk
 -include subdir_rules.mk
+-include clk/subdir_rules.mk
+-include fram/subdir_rules.mk
+-include uart/subdir_rules.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -140,8 +149,8 @@ Flash_FRAM.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" 
-	-$(RM) "main.d" 
+	-$(RM) "main.obj" "clk/clk.obj" "fram/fram.obj" "uart/uart.obj" 
+	-$(RM) "main.d" "clk/clk.d" "fram/fram.d" "uart/uart.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

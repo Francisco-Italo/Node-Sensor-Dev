@@ -7,8 +7,10 @@
 #define SENS_OUT P1OUT
 #define SENS_DIR P1DIR
 #define SENS_INT P1IFG
+
 #define MCLK_FREQ_MHZ 1
 #define FRAM_TEST_START 0x1800
+#define SLEEP_CONS  9375                  // 5 mins.
 /**
  * I2C use
  */
@@ -20,6 +22,10 @@ unsigned char TX_ByteCtr;
 /**
  * Variables
  */
+//--------------------------------------------------------------//
+// WDT
+//--------------------------------------------------------------//
+unsigned int wdt_cnt;
 //--------------------------------------------------------------//
 // Accel
 //--------------------------------------------------------------//
@@ -44,16 +50,13 @@ int *FRAM_write_ptr, data;
 // UART
 //--------------------------------------------------------------//
 unsigned char buff[6];
-typedef struct
+/*typedef struct
 {
-    unsigned int tmp;
-    unsigned int hum;
-    unsigned int xAcc;
-    unsigned int yAcc;
-    unsigned int zAcc;
-    unsigned int co2;
-    unsigned int tvoc;
-}dataPackage;
+    unsigned int id;
+    unsigned char hum_int,hum_decimals,tmp_int,tmp_decimals,parity; // dht
+    unsigned int co2Lvl, unsigned int tvocLvl;                      // ccs
+    unsigned int xAccel, unsigned int yAccel, unsigned int zAccel;  // mpu
+}data_pck;*/                                                        // UART tx
 /**
  * Relevant register addresses
  */
@@ -84,8 +87,8 @@ void init_gpio_unused();
 //------------------------------------------------//
 // FRAM unit
 //------------------------------------------------//
-void FRAMWrite(int);
-void write_memory(int);
+inline void FRAMWrite(int);
+inline void write_memory(int);
 //------------------------------------------------//
 // UART
 //------------------------------------------------//
@@ -111,7 +114,8 @@ void i2c_trans(unsigned char, unsigned char, unsigned char);
  */
 int main(void)
 {
-    WDTCTL = WDTPW | WDTHOLD;
+    WDTCTL = WDT_MDLY_32;                   // WDT 32ms, SMCLK, interval timer
+    SFRIE1 |= WDTIE;                        // Enable WDT interrupt
 
     clock_setup();
     init_gpio_unused();
@@ -121,160 +125,45 @@ int main(void)
     acc_setup();
     gas_setup();
 
-    unsigned char i;
+    //data_pck pck;
 
-    while (1)
+    while(1)
     {
-        FRAM_write_ptr = (int *)FRAM_TEST_START;
+        __bis_SR_register(LPM0_bits | GIE);
 
-        acc_comm();
-        gas_comm();
-
-        /*write_memory(xAccel);
+        write_memory(xAccel);
         write_memory(yAccel);
-        write_memory(zAccel);
+        write_memory(zAccel);                       // End of acc writing
         write_memory(co2Lvl);
-        write_memory(tvocLvl);*/
-        write_memory(dataPackage.xAcc);
-        write_memory(dataPackage.yAcc);
-        write_memory(dataPackage.zAcc);
-        write_memory(dataPackage.co2);
-        write_memory(dataPackage.tvoc);
+        write_memory(tvocLvl);                      // End of gases writing
+        write_memory(hum_decimals << 8 | hum_int);
+        write_memory(tmp_decimals << 8 | tmp_int);  // End temp/hum writing
 
-        if(dht11())
-        {
-            /*write_memory((int)hum_int);
-            write_memory((int)hum_decimals);
-            write_memory((int)tmp_int);
-            write_memory((int)tmp_decimals);*/
-            dataPackage.hum = hum_int << 8 | hum_decimals;
-            dataPackage.hum = tmp_int << 8 | tmp_decimals;
-            write_memory(dataPackage.hum);
-            write_memory(dataPackage.tmp);
-        }
-
-        FRAM_write_ptr = (int *)FRAM_TEST_START;
-        for(i = 0; i < 9; ++i)
+        // TO-DO: reading code block
+        /*
+        unsigned char i;
+        FRAM_write_ptr = (int*)FRAM_TEST_START;
+        for(i = 2; i > 0; --i)
         {
             data = *FRAM_write_ptr++;
-            convIntToStr(data, buff);
-            UARTOut(buff);
+            convIntToStr((data&0xFF), buff);
+            UARTOut(buff); UARTOut((unsigned char*)".");
+            convIntToStr((data>>8), buff);
+            UARTOut(buff); UARTOut((unsigned char*)"\n");
         }
-
-        //__delay_cycles(500000);
+        */
     }
-}
-/**
- * Clock & GPIO functions
- */
-//-------------------------------------------------------------------------------------------------//
-// Setting up clock signal
-//-------------------------------------------------------------------------------------------------//
-void clock_setup()
-{
-    __bis_SR_register(SCG0);                // Disable FLL
-    CSCTL3 = SELREF__REFOCLK;               // Set REFO as FLL reference source
-    CSCTL1 = DCOFTRIMEN | DCOFTRIM0 | DCOFTRIM1 | DCORSEL_0;// DCOFTRIM=3, DCO Range = 1MHz
-    CSCTL2 = FLLD_0 + 30;                   // DCODIV = 1MHz
-    __delay_cycles(3);
-    __bic_SR_register(SCG0);                // Enable FLL
-    Software_Trim();
-    CSCTL4 = SELMS__DCOCLKDIV | SELA__REFOCLK; // set default REFO(~32768Hz) as ACLK source, ACLK = 32768Hz
-                                               // default DCODIV as MCLK and SMCLK source
-}
-//-------------------------------------------------------------------------------------------------//
-// Software Trim to get the best DCOFTRIM value
-//-------------------------------------------------------------------------------------------------//
-void Software_Trim(void)
-{
-    unsigned int oldDcoTap = 0xffff;
-    unsigned int newDcoTap = 0xffff;
-    unsigned int newDcoDelta = 0xffff;
-    unsigned int bestDcoDelta = 0xffff;
-    unsigned int csCtl0Copy = 0;
-    unsigned int csCtl1Copy = 0;
-    unsigned int csCtl0Read = 0;
-    unsigned int csCtl1Read = 0;
-    unsigned int dcoFreqTrim = 3;
-    unsigned char endLoop = 0;
-
-    do
-    {
-        CSCTL0 = 0x100;                         // DCO Tap = 256
-        do
-        {
-            CSCTL7 &= ~DCOFFG;                  // Clear DCO fault flag
-        }while (CSCTL7 & DCOFFG);               // Test DCO fault flag
-
-        __delay_cycles((unsigned int)3000 * MCLK_FREQ_MHZ);// Wait FLL lock status (FLLUNLOCK) to be stable
-                                                           // Suggest to wait 24 cycles of divided FLL reference clock
-        while((CSCTL7 & (FLLUNLOCK0 | FLLUNLOCK1)) && ((CSCTL7 & DCOFFG) == 0));
-
-        csCtl0Read = CSCTL0;                   // Read CSCTL0
-        csCtl1Read = CSCTL1;                   // Read CSCTL1
-
-        oldDcoTap = newDcoTap;                 // Record DCOTAP value of last time
-        newDcoTap = csCtl0Read & 0x01ff;       // Get DCOTAP value of this time
-        dcoFreqTrim = (csCtl1Read & 0x0070)>>4;// Get DCOFTRIM value
-
-        if(newDcoTap < 256)                    // DCOTAP < 256
-        {
-            newDcoDelta = 256 - newDcoTap;     // Delta value between DCPTAP and 256
-            if((oldDcoTap != 0xffff) && (oldDcoTap >= 256)) // DCOTAP cross 256
-                endLoop = 1;                   // Stop while loop
-            else
-            {
-                dcoFreqTrim--;
-                CSCTL1 = (csCtl1Read & (~DCOFTRIM0)) | (dcoFreqTrim<<4);
-            }
-        }
-        else                                   // DCOTAP >= 256
-        {
-            newDcoDelta = newDcoTap - 256;     // Delta value between DCPTAP and 256
-            if(oldDcoTap < 256)                // DCOTAP cross 256
-                endLoop = 1;                   // Stop while loop
-            else
-            {
-                dcoFreqTrim++;
-                CSCTL1 = (csCtl1Read & (~DCOFTRIM0)) | (dcoFreqTrim<<4);
-            }
-        }
-
-        if(newDcoDelta < bestDcoDelta)         // Record DCOTAP closest to 256
-        {
-            csCtl0Copy = csCtl0Read;
-            csCtl1Copy = csCtl1Read;
-            bestDcoDelta = newDcoDelta;
-        }
-
-    }while(endLoop == 0);                      // Poll until endLoop == 1
-
-    CSCTL0 = csCtl0Copy;                       // Reload locked DCOTAP
-    CSCTL1 = csCtl1Copy;                       // Reload locked DCOFTRIM
-    while(CSCTL7 & (FLLUNLOCK0 | FLLUNLOCK1)); // Poll until FLL is locked
-}
-/**
- * GPIO high-impedance cutting
- */
-void init_gpio_unused()
-{
-    PM5CTL0 &= ~LOCKLPM5;                    // Disable the GPIO power-on default high-impedance mode
-                                             // to activate previously configured port settings
-    P2DIR = 0xFF; P3DIR = 0xFF;
-    P1REN = 0xFF; P2REN = 0xFF; P3REN = 0xFF;
-    P1OUT = 0x00; P2OUT = 0x00; P3OUT = 0x00;
-    P1IFG = 0x00; P2IFG = 0x00;
 }
 /**
  * FRAM memory module
  */
-void FRAMWrite (int value)
+inline void FRAMWrite (int value)
 {
     SYSCFG0 = FRWPPW | PFWP;
     *FRAM_write_ptr = value;
     SYSCFG0 = FRWPPW | DFWP | PFWP;
 }
-void write_memory(int sensor_vl)
+inline void write_memory(int sensor_vl)
 {
     FRAMWrite(sensor_vl);
     FRAM_write_ptr++;
@@ -558,5 +447,129 @@ void __attribute__ ((interrupt(USCI_B0_VECTOR))) USCIB0_ISR (void)
           __bic_SR_register_on_exit(CPUOFF);  // Exit LPM0
           break;
   }
+}
+//-------------------------------------------------------------------------------------------------//
+// WDT ISR
+//-------------------------------------------------------------------------------------------------//
+#if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
+#pragma vector=WDT_VECTOR
+__interrupt void WDT_ISR(void)
+#elif defined(__GNUC__)
+void __attribute__ ((interrupt(WDT_VECTOR))) WDT_ISR (void)
+#else
+#error Compiler not supported!
+#endif
+{
+    FRAM_write_ptr = (int*)FRAM_TEST_START;
+    if(++wdt_cnt == SLEEP_CONS)
+    {
+        acc_comm();
+        gas_comm();
+        while(dht11());
+
+        wdt_cnt = 0;
+    }
+    __bic_SR_register_on_exit(CPUOFF);  // Exit LPM0
+}
+/**
+ * Clock & GPIO functions
+ */
+//-------------------------------------------------------------------------------------------------//
+// Setting up clock signal
+//-------------------------------------------------------------------------------------------------//
+void clock_setup()
+{
+    __bis_SR_register(SCG0);                // Disable FLL
+    CSCTL3 = SELREF__REFOCLK;               // Set REFO as FLL reference source
+    CSCTL1 = DCOFTRIMEN | DCOFTRIM0 | DCOFTRIM1 | DCORSEL_0;// DCOFTRIM=3, DCO Range = 1MHz
+    CSCTL2 = FLLD_0 + 30;                   // DCODIV = 1MHz
+    __delay_cycles(3);
+    __bic_SR_register(SCG0);                // Enable FLL
+    Software_Trim();
+    CSCTL4 = SELMS__DCOCLKDIV | SELA__REFOCLK; // set default REFO(~32768Hz) as ACLK source, ACLK = 32768Hz
+                                               // default DCODIV as MCLK and SMCLK source
+}
+//-------------------------------------------------------------------------------------------------//
+// Software Trim to get the best DCOFTRIM value
+//-------------------------------------------------------------------------------------------------//
+void Software_Trim(void)
+{
+    unsigned int oldDcoTap = 0xffff;
+    unsigned int newDcoTap = 0xffff;
+    unsigned int newDcoDelta = 0xffff;
+    unsigned int bestDcoDelta = 0xffff;
+    unsigned int csCtl0Copy = 0;
+    unsigned int csCtl1Copy = 0;
+    unsigned int csCtl0Read = 0;
+    unsigned int csCtl1Read = 0;
+    unsigned int dcoFreqTrim = 3;
+    unsigned char endLoop = 0;
+
+    do
+    {
+        CSCTL0 = 0x100;                         // DCO Tap = 256
+        do
+        {
+            CSCTL7 &= ~DCOFFG;                  // Clear DCO fault flag
+        }while (CSCTL7 & DCOFFG);               // Test DCO fault flag
+
+        __delay_cycles((unsigned int)3000 * MCLK_FREQ_MHZ);// Wait FLL lock status (FLLUNLOCK) to be stable
+                                                           // Suggest to wait 24 cycles of divided FLL reference clock
+        while((CSCTL7 & (FLLUNLOCK0 | FLLUNLOCK1)) && ((CSCTL7 & DCOFFG) == 0));
+
+        csCtl0Read = CSCTL0;                   // Read CSCTL0
+        csCtl1Read = CSCTL1;                   // Read CSCTL1
+
+        oldDcoTap = newDcoTap;                 // Record DCOTAP value of last time
+        newDcoTap = csCtl0Read & 0x01ff;       // Get DCOTAP value of this time
+        dcoFreqTrim = (csCtl1Read & 0x0070)>>4;// Get DCOFTRIM value
+
+        if(newDcoTap < 256)                    // DCOTAP < 256
+        {
+            newDcoDelta = 256 - newDcoTap;     // Delta value between DCPTAP and 256
+            if((oldDcoTap != 0xffff) && (oldDcoTap >= 256)) // DCOTAP cross 256
+                endLoop = 1;                   // Stop while loop
+            else
+            {
+                dcoFreqTrim--;
+                CSCTL1 = (csCtl1Read & (~DCOFTRIM0)) | (dcoFreqTrim<<4);
+            }
+        }
+        else                                   // DCOTAP >= 256
+        {
+            newDcoDelta = newDcoTap - 256;     // Delta value between DCPTAP and 256
+            if(oldDcoTap < 256)                // DCOTAP cross 256
+                endLoop = 1;                   // Stop while loop
+            else
+            {
+                dcoFreqTrim++;
+                CSCTL1 = (csCtl1Read & (~DCOFTRIM0)) | (dcoFreqTrim<<4);
+            }
+        }
+
+        if(newDcoDelta < bestDcoDelta)         // Record DCOTAP closest to 256
+        {
+            csCtl0Copy = csCtl0Read;
+            csCtl1Copy = csCtl1Read;
+            bestDcoDelta = newDcoDelta;
+        }
+
+    }while(endLoop == 0);                      // Poll until endLoop == 1
+
+    CSCTL0 = csCtl0Copy;                       // Reload locked DCOTAP
+    CSCTL1 = csCtl1Copy;                       // Reload locked DCOFTRIM
+    while(CSCTL7 & (FLLUNLOCK0 | FLLUNLOCK1)); // Poll until FLL is locked
+}
+/**
+ * GPIO high-impedance cutting
+ */
+void init_gpio_unused()
+{
+    PM5CTL0 &= ~LOCKLPM5;                    // Disable the GPIO power-on default high-impedance mode
+                                             // to activate previously configured port settings
+    P2DIR = 0xFF; P3DIR = 0xFF;
+    P1REN = 0xFF; P2REN = 0xFF; P3REN = 0xFF;
+    P1OUT = 0x00; P2OUT = 0x00; P3OUT = 0x00;
+    P1IFG = 0x00; P2IFG = 0x00;
 }
 // End program

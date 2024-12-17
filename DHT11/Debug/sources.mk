@@ -112,4 +112,8 @@ PDE_DEPS__QUOTED :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 . \
+clk \
+dht \
+fram \
+uart \
 

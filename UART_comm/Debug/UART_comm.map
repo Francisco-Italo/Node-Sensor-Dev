@@ -1,7 +1,7 @@
 ******************************************************************************
                   MSP430 Linker Unix v21.6.1                   
 ******************************************************************************
->> Linked Tue Sep 17 19:08:00 2024
+>> Linked Fri Dec  6 12:47:20 2024
 
 OUTPUT FILE NAME:   <UART_comm.out>
 ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 0000c744
@@ -112,13 +112,13 @@ section   page    origin      length       input sections
 
 .text      0    0000c42e    0000035c     
                   0000c42e    000000ee     rts430x_lc_sd_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
-                  0000c51c    000000be     main.obj (.text:Software_Trim)
+                  0000c51c    000000be     uart.obj (.text:Software_Trim)
                   0000c5da    00000084     main.obj (.text:main)
                   0000c65e    0000006a     rts430x_lc_sd_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit_hold_wdt:__TI_auto_init_nobinit_nopinit_hold_wdt)
                   0000c6c8    00000040                            : cpy_util.asm.obj (.text:__memcpy_far)
                   0000c708    0000003c                            : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
                   0000c744    0000001c                            : boot.c.obj (.text:_isr:_c_int00_noargs)
-                  0000c760    00000016     main.obj (.text:ser_output)
+                  0000c760    00000016     uart.obj (.text:ser_output)
                   0000c776    00000008     rts430x_lc_sd_eabi.lib : isr_trap.asm.obj (.text:_isr:__TI_ISR_TRAP)
                   0000c77e    00000006                            : exit.c.obj (.text:abort)
                   0000c784    00000004                            : pre_init.c.obj (.text:_system_pre_init)
@@ -207,9 +207,14 @@ MODULE SUMMARY
        Module                       code   ro data   rw data
        ------                       ----   -------   -------
     ./
-       main.obj                     344    0         23     
+       main.obj                     132    0         23     
     +--+----------------------------+------+---------+---------+
-       Total:                       344    0         23     
+       Total:                       132    0         23     
+                                                            
+    ./uart/
+       uart.obj                     212    0         0      
+    +--+----------------------------+------+---------+---------+
+       Total:                       212    0         0      
                                                             
     /home/italo/ti/ccs1270/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/lib/rts430x_lc_sd_eabi.lib
        copy_decompress_lzss.c.obj   238    0         0      
