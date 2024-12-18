@@ -6,7 +6,6 @@ unsigned char TXData[] = "Hello Embedded World\n\r";
 
 int main(void)
 {
-    //WDTCTL = WDT_MDLY_32;                   // WDT 32ms, SMCLK, interval timer
     WDTCTL = WDT_ADLY_1000;                 // WDT 1000ms, ACLK, interval timer
     SFRIE1 |= WDTIE;                        // Enable WDT interrupt
 
@@ -19,7 +18,7 @@ int main(void)
     uart_setup();
 
     __bis_SR_register(LPM3_bits | GIE);     // Enter LPM3
-    __no_operation();                       // For debug*/
+    __no_operation();                       // For debug
 
 }
 
