@@ -1,10 +1,10 @@
 ******************************************************************************
                   MSP430 Linker Unix v21.6.1                   
 ******************************************************************************
->> Linked Fri Dec  6 12:47:20 2024
+>> Linked Tue Dec 17 21:44:38 2024
 
 OUTPUT FILE NAME:   <UART_comm.out>
-ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 0000c744
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 0000c73c
 
 
 MEMORY CONFIGURATION
@@ -16,7 +16,7 @@ MEMORY CONFIGURATION
   PERIPHERALS_16BIT     00000100   00000100  00000000  00000100  RWIX
   INFOA                 00001800   00000200  00000000  00000200  RWIX
   RAM                   00002000   00001000  000000b7  00000f49  RWIX
-  FRAM                  0000c400   00003b80  0000038a  000037f6  RWIX
+  FRAM                  0000c400   00003b80  00000394  000037ec  RWIX
   JTAGSIGNATURE         0000ff80   00000004  00000004  00000000  RWIX  ffff 
   BSLSIGNATURE          0000ff84   00000004  00000004  00000000  RWIX  ffff 
   INT00                 0000ff88   00000002  00000000  00000002  RWIX
@@ -110,19 +110,22 @@ section   page    origin      length       input sections
 
 .const     0    0000c42e    00000000     UNINITIALIZED
 
-.text      0    0000c42e    0000035c     
+.text      0    0000c42e    00000366     
                   0000c42e    000000ee     rts430x_lc_sd_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
-                  0000c51c    000000be     uart.obj (.text:Software_Trim)
-                  0000c5da    00000084     main.obj (.text:main)
-                  0000c65e    0000006a     rts430x_lc_sd_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit_hold_wdt:__TI_auto_init_nobinit_nopinit_hold_wdt)
-                  0000c6c8    00000040                            : cpy_util.asm.obj (.text:__memcpy_far)
-                  0000c708    0000003c                            : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
-                  0000c744    0000001c                            : boot.c.obj (.text:_isr:_c_int00_noargs)
-                  0000c760    00000016     uart.obj (.text:ser_output)
-                  0000c776    00000008     rts430x_lc_sd_eabi.lib : isr_trap.asm.obj (.text:_isr:__TI_ISR_TRAP)
-                  0000c77e    00000006                            : exit.c.obj (.text:abort)
-                  0000c784    00000004                            : pre_init.c.obj (.text:_system_pre_init)
-                  0000c788    00000002                            : startup.c.obj (.text:_system_post_cinit)
+                  0000c51c    000000be     clk.obj (.text:software_trim)
+                  0000c5da    0000006a     rts430x_lc_sd_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit_hold_wdt:__TI_auto_init_nobinit_nopinit_hold_wdt)
+                  0000c644    00000040                            : cpy_util.asm.obj (.text:__memcpy_far)
+                  0000c684    0000003c                            : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
+                  0000c6c0    0000002c     main.obj (.text:main)
+                  0000c6ec    0000002a     clk.obj (.text:clk_setup)
+                  0000c716    00000026     uart.obj (.text:uart_setup)
+                  0000c73c    0000001c     rts430x_lc_sd_eabi.lib : boot.c.obj (.text:_isr:_c_int00_noargs)
+                  0000c758    00000016     uart.obj (.text:ser_output)
+                  0000c76e    00000012     main.obj (.text:_isr:WDT_ISR)
+                  0000c780    00000008     rts430x_lc_sd_eabi.lib : isr_trap.asm.obj (.text:_isr:__TI_ISR_TRAP)
+                  0000c788    00000006                            : exit.c.obj (.text:abort)
+                  0000c78e    00000004                            : pre_init.c.obj (.text:_system_pre_init)
+                  0000c792    00000002                            : startup.c.obj (.text:_system_post_cinit)
 
 .data      0    00002000    00000017     UNINITIALIZED
                   00002000    00000017     main.obj (.data:TXData)
@@ -150,7 +153,7 @@ USCI_A0    0    0000ffe4    00000002
                   0000ffe4    00000002     rts430x_lc_sd_eabi.lib : int46.asm.obj (.int46)
 
 WDT        0    0000ffe6    00000002     
-                  0000ffe6    00000002     rts430x_lc_sd_eabi.lib : int47.asm.obj (.int47)
+                  0000ffe6    00000002     main.obj (.int47)
 
 RTC        0    0000ffe8    00000002     
                   0000ffe8    00000002     rts430x_lc_sd_eabi.lib : int48.asm.obj (.int48)
@@ -207,14 +210,19 @@ MODULE SUMMARY
        Module                       code   ro data   rw data
        ------                       ----   -------   -------
     ./
-       main.obj                     132    0         23     
+       main.obj                     62     2         23     
     +--+----------------------------+------+---------+---------+
-       Total:                       132    0         23     
+       Total:                       62     2         23     
+                                                            
+    ./clk/
+       clk.obj                      232    0         0      
+    +--+----------------------------+------+---------+---------+
+       Total:                       232    0         0      
                                                             
     ./uart/
-       uart.obj                     212    0         0      
+       uart.obj                     60     0         0      
     +--+----------------------------+------+---------+---------+
-       Total:                       212    0         0      
+       Total:                       60     0         0      
                                                             
     /home/italo/ti/ccs1270/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/lib/rts430x_lc_sd_eabi.lib
        copy_decompress_lzss.c.obj   238    0         0      
@@ -231,7 +239,6 @@ MODULE SUMMARY
        int44.asm.obj                0      2         0      
        int45.asm.obj                0      2         0      
        int46.asm.obj                0      2         0      
-       int47.asm.obj                0      2         0      
        int48.asm.obj                0      2         0      
        int49.asm.obj                0      2         0      
        int50.asm.obj                0      2         0      
@@ -245,12 +252,12 @@ MODULE SUMMARY
        int58.asm.obj                0      2         0      
        startup.c.obj                2      0         0      
     +--+----------------------------+------+---------+---------+
-       Total:                       516    38        0      
+       Total:                       516    36        0      
                                                             
        Stack:                       0      0         160    
        Linker Generated:            0      45        0      
     +--+----------------------------+------+---------+---------+
-       Grand Total:                 860    83        183    
+       Grand Total:                 870    83        183    
 
 
 LINKER GENERATED COPY TABLES
@@ -348,7 +355,7 @@ address   name
 00000672  BAKMEM9                                
 00000673  BAKMEM9_H                              
 00000672  BAKMEM9_L                              
-0000c77e  C$$EXIT                                
+0000c788  C$$EXIT                                
 000001c0  CRCDI                                  
 000001c2  CRCDIRB                                
 000001c3  CRCDIRB_H                              
@@ -594,7 +601,6 @@ address   name
 0000015a  SYSUNIV                                
 0000015b  SYSUNIV_H                              
 0000015a  SYSUNIV_L                              
-0000c51c  Software_Trim                          
 00000392  TA0CCR0                                
 00000394  TA0CCR1                                
 00000396  TA0CCR2                                
@@ -744,6 +750,7 @@ address   name
 000001cc  WDTCTL                                 
 000001cd  WDTCTL_H                               
 000001cc  WDTCTL_L                               
+0000c76e  WDT_ISR                                
 00003000  __STACK_END                            
 000000a0  __STACK_SIZE                           
 0000c426  __TI_CINIT_Base                        
@@ -751,10 +758,10 @@ address   name
 0000c42e  __TI_CINIT_Warm                        
 0000c41e  __TI_Handler_Table_Base                
 0000c426  __TI_Handler_Table_Limit               
-0000c776  __TI_ISR_TRAP                          
-0000c65e  __TI_auto_init_nobinit_nopinit_hold_wdt
+0000c780  __TI_ISR_TRAP                          
+0000c5da  __TI_auto_init_nobinit_nopinit_hold_wdt
 0000c42e  __TI_decompress_lzss                   
-0000c708  __TI_decompress_none                   
+0000c684  __TI_decompress_none                   
 0000ffda  __TI_int41                             
 0000ffdc  __TI_int42                             
 0000ffde  __TI_int43                             
@@ -777,15 +784,18 @@ ffffffff  __TI_pprof_out_hndl
 ffffffff  __TI_prof_data_size                    
 ffffffff  __TI_prof_data_start                   
 ffffffff  __c_args__                             
-0000c6c8  __memcpy_far                           
-0000c744  _c_int00_noargs                        
+0000c644  __memcpy_far                           
+0000c73c  _c_int00_noargs                        
 0000fffe  _reset_vector                          
 00002f60  _stack                                 
-0000c788  _system_post_cinit                     
-0000c784  _system_pre_init                       
-0000c77e  abort                                  
-0000c5da  main                                   
-0000c760  ser_output                             
+0000c792  _system_post_cinit                     
+0000c78e  _system_pre_init                       
+0000c788  abort                                  
+0000c6ec  clk_setup                              
+0000c6c0  main                                   
+0000c758  ser_output                             
+0000c51c  software_trim                          
+0000c716  uart_setup                             
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -1273,18 +1283,21 @@ address   name
 0000c42e  __TI_CINIT_Limit                       
 0000c42e  __TI_CINIT_Warm                        
 0000c42e  __TI_decompress_lzss                   
-0000c51c  Software_Trim                          
-0000c5da  main                                   
-0000c65e  __TI_auto_init_nobinit_nopinit_hold_wdt
-0000c6c8  __memcpy_far                           
-0000c708  __TI_decompress_none                   
-0000c744  _c_int00_noargs                        
-0000c760  ser_output                             
-0000c776  __TI_ISR_TRAP                          
-0000c77e  C$$EXIT                                
-0000c77e  abort                                  
-0000c784  _system_pre_init                       
-0000c788  _system_post_cinit                     
+0000c51c  software_trim                          
+0000c5da  __TI_auto_init_nobinit_nopinit_hold_wdt
+0000c644  __memcpy_far                           
+0000c684  __TI_decompress_none                   
+0000c6c0  main                                   
+0000c6ec  clk_setup                              
+0000c716  uart_setup                             
+0000c73c  _c_int00_noargs                        
+0000c758  ser_output                             
+0000c76e  WDT_ISR                                
+0000c780  __TI_ISR_TRAP                          
+0000c788  C$$EXIT                                
+0000c788  abort                                  
+0000c78e  _system_pre_init                       
+0000c792  _system_post_cinit                     
 0000ffda  __TI_int41                             
 0000ffdc  __TI_int42                             
 0000ffde  __TI_int43                             
@@ -1309,4 +1322,4 @@ ffffffff  __TI_prof_data_size
 ffffffff  __TI_prof_data_start                   
 ffffffff  __c_args__                             
 
-[516 symbols]
+[519 symbols]
