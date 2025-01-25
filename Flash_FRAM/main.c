@@ -1,31 +1,17 @@
-//******************************************************************************
-//   MSP430FR235x Demo - Long word writes to FRAM
-//
-//   Description: Use long word write to write to 512 byte blocks of info FRAM.
-//   Toggle LED after every 100 writes.
-//   ACLK = REFO, MCLK = SMCLK = default DCODIV = ~1MHz
-//
-//           MSP430FR2355
-//         ---------------
-//     /|\|               |
-//      | |               |
-//      --|RST            |
-//        |               |
-//        |          P1.0 |---> LED
-//
-//   Darren Lu
-//   Texas Instruments Inc.
-//   Oct. 2016
-//   Built with IAR Embedded Workbench v6.50 & Code Composer Studio v6.2
-//******************************************************************************
 #include "msp_conf.h"
 #include "clk/clk.h"
 #include "uart/uart.h"
-#include "fram/fram.h"
 
-#define FRAM_TEST_START 0x1800
-
-unsigned int *FRAM_write_ptr, data;
+// Statically-initialized variable
+#ifdef __TI_COMPILER_VERSION__
+#pragma PERSISTENT(data)
+int data = 0x0100;
+#elif __IAR_SYSTEMS_ICC__
+__persistent int data = 0x0100;
+#else
+// Port the following variable to an equivalent persistent functionality for the specific compiler being used
+int data = 0x0100;
+#endif
 
 int main(void)
 {
@@ -35,36 +21,19 @@ int main(void)
                                             // to activate previously configured port settings
 
     P1OUT &= ~BIT0;                         // Clear P1.0 output latch for a defined power-on state
-    P1DIR |= BIT0;                          // Set P1.0 to output directionOUT
+    P1DIR |= BIT0;                          // Set P1.0 to output direction OUT
 
-    UARTConf();
-
-    data = 0x0001;                      // Initialize dummy data
-    unsigned char buff[6];
-    unsigned char count = 0;
+    uart_setup();
 
     while(1)
     {
+        SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
         data += 0x0001;
-        FRAM_write_ptr = (unsigned int *)FRAM_TEST_START;
-        FRAMWrite();
-        count++;
-        if (count > 4)
-        {
-            FRAM_write_ptr = (unsigned int *)FRAM_TEST_START;
+        SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
 
-            unsigned char i;
-            for(i = 0; i < 5; ++i)
-            {
-                data = *FRAM_write_ptr++;
-                convIntToStr(data, buff);
-                UARTOut(buff);
-            }
-
-            P1OUT ^= 0x01;                  // Toggle LED to show 512 bytes
-            count = 0;                      // have been written
-            data = 0x0001;
-        }
+        uart_out(&data, sizeof(data));
+        P1OUT ^= 0x01;
+        _delay_cycles(500000);
     }
 }
 // End of file

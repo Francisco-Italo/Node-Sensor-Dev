@@ -49,7 +49,7 @@ void i2c_trans(unsigned char addr, unsigned char rw, unsigned char byteCtr)
     (rw) ? (UCB0CTL1 |= UCTR):(UCB0CTL1 &= ~UCTR);  // Clear -> receiver / Set -> transmitter
     UCB0CTL1 |= UCTXSTT;
 
-    __bis_SR_register(LPM0_bits|GIE);   // Enter LPM0 w/ interrupt
+    __bis_SR_register(LPM3_bits|GIE);   // Enter LPM0 w/ interrupt
 }
 /**
  * UCB0 ISR
@@ -65,9 +65,7 @@ void __attribute__ ((interrupt(USCI_B0_VECTOR))) USCIB0_ISR (void)
 {
   switch(__even_in_range(UCB0IV, USCI_I2C_UCBIT9IFG))
   {
-      case USCI_I2C_UCNACKIFG:
-          UCB0CTL1 |= UCTXSTT;                      //resend start if NACK
-          break;
+      case USCI_I2C_UCNACKIFG:break;
       case USCI_I2C_UCRXIFG0:
           RX_Data[--RX_ByteCtr] = UCB0RXBUF;  // Get received byte
           break;
@@ -76,7 +74,7 @@ void __attribute__ ((interrupt(USCI_B0_VECTOR))) USCIB0_ISR (void)
           break;
       case USCI_I2C_UCBCNTIFG:
           UCB0CTL1 |= UCTXSTP;
-          __bic_SR_register_on_exit(CPUOFF);  // Exit LPM0
+          __bic_SR_register_on_exit(LPM3_bits);  // Exit LPM3
           break;
   }
 }

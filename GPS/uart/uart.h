@@ -11,7 +11,6 @@
 #define BUFFER_SIZE 100
 
 void uart_setup(void);
-void uart_transmit_char(char c);
-void uart_transmit_string(volatile char *str);
+void ser_output(volatile unsigned char *str);
 
 #endif /* UART_UART_H_ */

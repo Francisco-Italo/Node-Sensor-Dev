@@ -8,8 +8,7 @@
 #include <msp430.h>
 #include "uart.h"
 
-volatile char rx_buffer[BUFFER_SIZE];
-volatile unsigned char rx_index, c;
+volatile unsigned char rx_index, c, rx_buffer[BUFFER_SIZE];
 
 void uart_setup(void)
 {
@@ -31,14 +30,12 @@ void uart_setup(void)
     UCA0IE |= UCRXIE;                         // Enable USCI_A0 RX interrupt
 }
 
-void uart_transmit_char(char c) {
-    while (!(UCA0IFG & UCTXIFG));  // Wait for TX buffer to be ready
-    UCA0TXBUF = c;
-}
-
-void uart_transmit_string(volatile char *str) {
-    while (*str) {
-        uart_transmit_char(*str++);
+void ser_output(volatile unsigned char *str)
+{
+    while (*str)
+    {
+        while (!(UCA0IFG & UCTXIFG));
+        UCA0TXBUF = *str++;
     }
 }
 
@@ -64,7 +61,7 @@ void __attribute__ ((interrupt(USCI_A0_VECTOR))) USCI_A0_ISR (void)
             rx_index = 0;
             if(rx_buffer[4] == 'G' && rx_buffer[5] == 'A')
             {
-                uart_transmit_string(rx_buffer);
+                ser_output(rx_buffer);
             }
 
             P1OUT ^= BIT0;

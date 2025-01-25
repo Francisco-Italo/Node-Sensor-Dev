@@ -11,9 +11,9 @@
 /**
  * Prototypes
  */
-//void acc_setup(void);
+void acc_setup(void);
 void gas_setup(void);
-//void acc_comm(void);
+void acc_comm(void);
 void gas_comm(void);
 
 #endif /* I2C_SENSORS_H_ */

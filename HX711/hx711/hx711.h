@@ -10,6 +10,6 @@
 
 void scale_init(void);
 long scale_read(void);
-float scale_get_weight(long);
+//float scale_get_weight(long);
 
 #endif /* HX711_HX711_H_ */

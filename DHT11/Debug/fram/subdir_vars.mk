@@ -4,21 +4,21 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../fram/fram.c 
+../fram/var.c 
 
 C_DEPS += \
-./fram/fram.d 
+./fram/var.d 
 
 OBJS += \
-./fram/fram.obj 
+./fram/var.obj 
 
 OBJS__QUOTED += \
-"fram/fram.obj" 
+"fram/var.obj" 
 
 C_DEPS__QUOTED += \
-"fram/fram.d" 
+"fram/var.d" 
 
 C_SRCS__QUOTED += \
-"../fram/fram.c" 
+"../fram/var.c" 
 
 

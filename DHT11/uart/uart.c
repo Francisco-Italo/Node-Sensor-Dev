@@ -7,7 +7,7 @@
 #include "../msp_conf.h"
 #include "uart.h"
 
-void UARTConf(void)
+void uart_setup(void)
 {
     // Configure UART pins
     P1SEL0 |= BIT4 | BIT5;                    // set 2-UART pin as second function
@@ -25,31 +25,15 @@ void UARTConf(void)
     UCA0CTLW0 &= ~UCSWRST;                    // Initialize eUSCI
 }
 
-void convIntToStr(unsigned int num, unsigned char *str)
+void uart_out(const void *data, char length)
 {
-    unsigned char i = 0, j = 0;
-    unsigned char aux[] = {'0','0','0','0','0','\0'};
-
-    do
-    {
-      aux[i++] = num % 10 + '0';
-      num /= 10;
-    }
-    while(num > 0);
-
-    while(i--)
-    {
-      str[j++] = aux[i];
-    }
-    str[j] = '\0';
-}
-
-void UARTOut(unsigned char *str)
-{
-  while(*str)
+  const char* buff = (const char*)data;
+  char i;
+  for(i = 0; i < length; ++i)
   {
-    while(!(UCA0IFG&UCTXIFG));
-    UCA0TXBUF = *str++;
+      while(!(UCA0IFG&UCTXIFG));
+      UCA0TXBUF = buff[i];
+      //_delay_cycles(2000);        // Logic analyzer crutch
   }
 }
 // End of file

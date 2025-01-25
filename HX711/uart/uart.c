@@ -9,14 +9,15 @@
 #include "uart.h"
 
 #define MCLK_FREQ_MHZ 1                     // MCLK = 1MHz
-#define DECIMAL_PLACES 2
+#define DCODIV_1MHZ   30
+//#define DECIMAL_PLACES 2
 
 void uart_init(void)
 {
     __bis_SR_register(SCG0);                // Disable FLL
     CSCTL3 = SELREF__REFOCLK;               // Set REFO as FLL reference source
     CSCTL1 = DCOFTRIMEN | DCOFTRIM0 | DCOFTRIM1 | DCORSEL_0;// DCOFTRIM=3, DCO Range = 1MHz
-    CSCTL2 = FLLD_0 + 30;                   // DCODIV = 1MHz
+    CSCTL2 = FLLD_0 + DCODIV_1MHZ;                   // DCODIV = 1MHz
     __delay_cycles(3);
     __bic_SR_register(SCG0);                // Enable FLL
     Software_Trim();                        // Software Trim to get the best DCOFTRIM value
@@ -41,7 +42,19 @@ void uart_init(void)
     UCA0CTLW0 &= ~UCSWRST;                    // Initialize eUSCI
 }
 
-void serial_out(unsigned char* str)
+void uart_out(const void *data, unsigned char length)
+{
+  const char* buff = (const char*)data;
+  char i;
+  for(i = 0; i < length; ++i)
+  {
+      while(!(UCA0IFG&UCTXIFG));
+      UCA0TXBUF = buff[i];
+      //_delay_cycles(2000);        // Logic analyzer crutch
+  }
+}
+
+/*void serial_out(volatile unsigned char* str)
 {
     while(*str)
     {
@@ -69,7 +82,7 @@ void int_conv(unsigned int regVal, unsigned char *str)
   str[j] = '\0';
 }
 
-void float_conv(float value, unsigned char *str)
+void float_conv(float value, volatile unsigned char *str)
 {
     long integer_part = (long)value; // Extract integer part
     float fractional_part = value - integer_part; // Extract fractional part
@@ -109,7 +122,7 @@ void float_conv(float value, unsigned char *str)
     }
 
     *str= '\0'; // Null-terminate the string
-}
+}*/
 
 void Software_Trim(void)
 {

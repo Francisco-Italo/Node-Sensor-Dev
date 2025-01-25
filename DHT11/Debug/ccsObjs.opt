@@ -1,7 +1,7 @@
 "./main.obj"
 "./clk/clk.obj"
 "./dht/dht11.obj"
-"./fram/fram.obj"
+"./fram/var.obj"
 "./uart/uart.obj"
 "../lnk_msp430fr2433.cmd"
 -llibmath.a

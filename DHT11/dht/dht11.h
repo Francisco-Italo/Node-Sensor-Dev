@@ -8,9 +8,7 @@
 #ifndef DHT_DHT11_H_
 #define DHT_DHT11_H_
 
-extern unsigned char hum_int,hum_decimals,tmp_int,tmp_decimals, parity;
-
-unsigned char recv_sig(void);
-int dht11(void);
+unsigned char recv_signal(void);
+int dht11_read(void);
 
 #endif /* DHT_DHT11_H_ */

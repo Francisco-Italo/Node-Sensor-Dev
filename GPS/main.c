@@ -16,7 +16,7 @@ int main(void)
 
     P1DIR |= BIT0; P1OUT &= ~(BIT0);
 
-     __bis_SR_register(LPM0_bits|GIE);         // Enter LPM0, interrupts enabled
+     __bis_SR_register(LPM3_bits|GIE);         // Enter LPM3, interrupts enabled
     __no_operation();
 }
 // End of file

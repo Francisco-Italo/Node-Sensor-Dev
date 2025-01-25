@@ -10,8 +10,8 @@
 
 void uart_init(void);
 void Software_Trim(void);                       // Software Trim to get the best DCOFTRIM value
-void serial_out(unsigned char*);
-void int_conv(unsigned int, unsigned char*);
-void float_conv(float, unsigned char*);
+void uart_out(const void*, unsigned char);
+/*void int_conv(unsigned int, unsigned char*);
+void float_conv(float, volatile unsigned char*);*/
 
 #endif /* UART_UART_H_ */

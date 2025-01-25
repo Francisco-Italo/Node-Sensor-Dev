@@ -9,13 +9,14 @@
 #include "clk.h"
 
 #define MCLK_FREQ_MHZ 1                     // MCLK = 1MHz
+#define DCODIV_1MHZ   30
 
 void clock_setup(void)
 {
     __bis_SR_register(SCG0);                // Disable FLL
     CSCTL3 = SELREF__REFOCLK;               // Set REFO as FLL reference source
     CSCTL1 = DCOFTRIMEN | DCOFTRIM0 | DCOFTRIM1 | DCORSEL_0;// DCOFTRIM=3, DCO Range = 1MHz
-    CSCTL2 = FLLD_0 + 30;                   // DCODIV = 1MHz
+    CSCTL2 = FLLD_0 + DCODIV_1MHZ;                   // DCODIV = 1MHz
     __delay_cycles(3);
     __bic_SR_register(SCG0);                // Enable FLL
     Software_Trim();                        // Software Trim to get the best DCOFTRIM value

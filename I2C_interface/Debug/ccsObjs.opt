@@ -1,6 +1,9 @@
 "./main.obj"
+"./clk/clk.obj"
+"./fram/var.obj"
 "./i2c/i2c.obj"
 "./i2c/sensors.obj"
+"./uart/uart.obj"
 "../lnk_msp430fr2433.cmd"
 -llibmath.a
 -llibc.a

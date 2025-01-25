@@ -3,47 +3,61 @@
  * Excitation- (E-)
  * Output/Signal/Amplifier+ (O/S/A+)
  * Output/Signal/Amplifier- (O/S/A-)
- *
  */
 
 #include "msp_conf.h"
+#include "clk/clk.h"
+#include "fram/fram.h"
 #include "uart/uart.h"
 #include "hx711/hx711.h"
 
+volatile char i;
+
 int main(void)
 {
-    WDTCTL = WDTPW | WDTHOLD;                 // Stop watchdog timer
+    WDTCTL = WDT_ADLY_1000;                 // WDT 1000ms, ACLK, interval timer
+    SFRIE1 |= WDTIE;                        // Enable WDT interrupt
+
+    clk_setup();
 
     uart_init();
     scale_init();
 
-    char i;
-    long y;
-    long tare;
-    float weight;
-    unsigned char buffer[20]; // Buffer para armazenar a string com o valor de y
-
+    SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
     for(i = 16; i > 0; --i)
     {
-        tare += scale_read();
+        tare = tare+scale_read();
     }
-    tare = -tare;
     tare >>= 4;
+    SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
 
-    while (1)
-    {
-        for(i = 16; i > 0; --i)
-        {
-            y += scale_read(); y += tare;
-        }
-        y >>= 4;
-
-        weight = scale_get_weight(y);
-
-        float_conv(weight, buffer);
-        serial_out(buffer); // Enviar o valor de y pela UART
-        serial_out("\n\n");
-
-        y ^= y;
-    }
+    __bis_SR_register(LPM3_bits | GIE);     // Enter LPM3
+    __no_operation();                       // For debug
 }
+
+// Watchdog Timer interrupt service routine
+#if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
+#pragma vector=WDT_VECTOR
+__interrupt void WDT_ISR(void)
+#elif defined(__GNUC__)
+void __attribute__ ((interrupt(WDT_VECTOR))) WDT_ISR (void)
+#else
+#error Compiler not supported!
+#endif
+{
+    SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
+    for(i = 16; i > 0; --i)
+    {
+        y = y+scale_read();
+        y = y-tare;
+    }
+    y >>= 4;
+    SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
+
+    uart_out(&y, sizeof(y));
+
+    SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
+    y ^= y;
+    SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
+}
+// End of file

@@ -14,7 +14,6 @@
 #define HX711_DT_PIN    BIT7
 
 #define GAIN            1          // Gain of 128 -> 1 additional clock pulse
-#define CALIBRATION_FACTOR 21.44
 
 void scale_init(void)
 {
@@ -24,7 +23,6 @@ void scale_init(void)
 
     P1DIR &= ~HX711_DT_PIN; // Define DT como entrada
     P1REN |= HX711_DT_PIN; // Habilita resistor de pull-up
-    //P1OUT |= HX711_DT_PIN; // Define resistor de pull-up
 
     // Aguarde o HX711 estar pronto (estabilização)
     _delay_cycles(2000);
@@ -32,7 +30,7 @@ void scale_init(void)
 
 long scale_read(void)
 {
- //  / Inicializa a variável para armazenar o valor lido
+    // Inicializa a variável para armazenar o valor lido
     long value = 0;
     char i = 0;
 
@@ -55,7 +53,7 @@ long scale_read(void)
     for(i = 0; i < GAIN; ++i)
     {
         P1OUT |= HX711_SCK_PIN; // SCK em HIGH
-        //__delay_cycles(10); // Pequeno atraso (ajuste conforme necessário)
+        __delay_cycles(10); // Pequeno atraso (ajuste conforme necessário)
         P1OUT &= ~HX711_SCK_PIN; // SCK em LOW
         _delay_cycles(3500);
     }
@@ -66,10 +64,5 @@ long scale_read(void)
     }
 
     return value;
-}
-
-float scale_get_weight(long raw_value)
-{
-    return (float)raw_value / CALIBRATION_FACTOR;
 }
 // End of file

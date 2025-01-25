@@ -11,7 +11,7 @@ ORDERED_OBJS += \
 "./main.obj" \
 "./clk/clk.obj" \
 "./dht/dht11.obj" \
-"./fram/fram.obj" \
+"./fram/var.obj" \
 "./uart/uart.obj" \
 "../lnk_msp430fr2433.cmd" \
 $(GEN_CMDS__FLAG) \
@@ -152,8 +152,8 @@ DHT11.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "clk/clk.obj" "dht/dht11.obj" "fram/fram.obj" "uart/uart.obj" 
-	-$(RM) "main.d" "clk/clk.d" "dht/dht11.d" "fram/fram.d" "uart/uart.d" 
+	-$(RM) "main.obj" "clk/clk.obj" "dht/dht11.obj" "fram/var.obj" "uart/uart.obj" 
+	-$(RM) "main.d" "clk/clk.d" "dht/dht11.d" "fram/var.d" "uart/uart.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
