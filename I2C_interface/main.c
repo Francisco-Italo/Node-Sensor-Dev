@@ -31,6 +31,10 @@ int main(void)
 	while(1)
 	{
         __bis_SR_register(LPM3_bits|GIE);   // Enter LPM0 w/ interrupt
+        
+        acc_comm();
+        gas_comm();
+        
         uart_out(&_accel_pck, sizeof(_accel_pck));
         uart_out(&_co2_pck, sizeof(_co2_pck));
 	}
@@ -51,9 +55,6 @@ void __attribute__ ((interrupt(WDT_VECTOR))) WDT_ISR (void)
     wdt_cnt++;
     if(wdt_cnt == SLEEP_CONS)
     {
-        acc_comm();
-        gas_comm();
-
         wdt_cnt = 0;
 
         __bic_SR_register_on_exit(LPM3_bits);

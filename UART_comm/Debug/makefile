@@ -2,13 +2,14 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-CG_TOOL_ROOT := /home/italo/ti/ccs1270/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS
+CG_TOOL_ROOT := /home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
 "./main.obj" \
+"./E32/E32.obj" \
 "./clk/clk.obj" \
 "./uart/uart.obj" \
 "../lnk_msp430fr2433.cmd" \
@@ -24,9 +25,11 @@ RMDIR := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
+-include E32/subdir_vars.mk
 -include clk/subdir_vars.mk
 -include uart/subdir_vars.mk
 -include subdir_rules.mk
+-include E32/subdir_rules.mk
 -include clk/subdir_rules.mk
 -include uart/subdir_rules.mk
 -include objects.mk
@@ -139,15 +142,15 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 UART_comm.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: MSP430 Linker'
-	"/home/italo/ti/ccs1270/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/bin/cl430" -vmspx --use_hw_mpy=F5 --advice:power=all --advice:hw_config=all --define=__MSP430FR2433__ -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 -z -m"UART_comm.map" --heap_size=160 --stack_size=160 --cinit_hold_wdt=on -i"/home/italo/ti/ccs1270/ccs/ccs_base/msp430/include" -i"/home/italo/ti/ccs1270/ccs/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"/home/italo/ti/ccs1270/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/lib" -i"/home/italo/ti/ccs1270/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="UART_comm_linkInfo.xml" --use_hw_mpy=F5 --rom_model -o "UART_comm.out" $(ORDERED_OBJS)
+	"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/bin/cl430" -vmspx --use_hw_mpy=F5 --advice:power=all --advice:hw_config=all --define=__MSP430FR2433__ -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 -z -m"UART_comm.map" --heap_size=160 --stack_size=160 --cinit_hold_wdt=on -i"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/include" -i"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/lib" -i"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="UART_comm_linkInfo.xml" --use_hw_mpy=F5 --rom_model -o "UART_comm.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "clk/clk.obj" "uart/uart.obj" 
-	-$(RM) "main.d" "clk/clk.d" "uart/uart.d" 
+	-$(RM) "main.obj" "E32/E32.obj" "clk/clk.obj" "uart/uart.obj" 
+	-$(RM) "main.d" "E32/E32.d" "clk/clk.d" "uart/uart.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

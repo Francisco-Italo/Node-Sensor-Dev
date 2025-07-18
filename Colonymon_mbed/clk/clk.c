@@ -4,7 +4,7 @@
  *  Created on: 30 de nov de 2024
  *      Author: italo
  */
-#include "../msp_conf.h"
+#include <msp430.h>
 #include "clk.h"
 
 #define MCLK_FREQ_MHZ 1                     // MCLK = 1MHz

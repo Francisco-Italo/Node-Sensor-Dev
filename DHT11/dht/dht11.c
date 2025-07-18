@@ -6,136 +6,83 @@
  */
 #include "../msp_conf.h"
 #include "../fram/var.h"
+#include "intrinsics.h"
 #include "dht11.h"
 
-#define DHT11 BIT4
-#define SENS_IN P2IN
-#define SENS_OUT P2OUT
-#define SENS_DIR P2DIR
-#define SENS_INT P2IFG
-
-unsigned char elapsed_time;
-//unsigned int loop_cnt;
-
 /**
- * DHT11 comm. signal processing
+ * Função principal para leitura do sensor DHT11 usando polling
  */
-unsigned char recv_signal(void)
-{
-    char val = 0;
-    char bit_cnt;
+dht_status_t dht11(void) {
+    char data[5] = {0};
+    unsigned int pulse_width;
+    char bit_cnt, byte_cnt;
 
-    for(bit_cnt=8;bit_cnt>0;--bit_cnt) // for humidity first byte
-    {
-        elapsed_time = 0;
-        // skip the lower 50 uS part
-        while(!(SENS_IN&DHT11))
-        {
-            elapsed_time++;
-            /*if(elapsed_time > 200)
-            {
-                return 1;
-            }*/
-        }
+    // 1. Inicia comunicação com o sensor (pino LOW por 18 ms)
+    SENS_DIR |= DHT11_PIN;        // Define pino como saída
+    SENS_OUT &= ~DHT11_PIN;       // Coloca em nível baixo
+    __delay_cycles(18000);               // Aguarda 18ms
 
-        elapsed_time = 0;
-        do
-        {
-            elapsed_time++; // check if the elapsed time = 80 uS
-            /*if(elapsed_time > 200)
-            {
-                return 1;
-            }*/
-        }
-        while((SENS_IN&DHT11)==DHT11);
-        if(elapsed_time > 5)
-        {
-            val |= 0x01;
-        }
+    // 2. Prepara para receber resposta
+    SENS_OUT |= DHT11_PIN;        // Coloca nível alto
+    __delay_cycles(40);                  // Aguarda 40us
+    SENS_DIR &= ~DHT11_PIN;       // Define como entrada
+    SENS_REN |= DHT11_PIN;        // Habilita pull-up
+    SENS_OUT |= DHT11_PIN;        // Ativa pull-up
 
-        val <<= 1;
-    }
+    // 3. Mede resposta LOW (~80us)
+    pulse_width = RESPONSE_TIMEOUT_US;
+    do{
+        if (--pulse_width == 0)
+            return STATUS_TIMEOUT_RESPONSE;
+    }while (!(SENS_IN&DHT11_PIN));
 
-    return (val>>=1);   // Return corrected value
-}
+    // 4. Mede resposta HIGH (~80us)
+    pulse_width = RESPONSE_TIMEOUT_US;
+    do{
+        if (--pulse_width == 0)
+            return STATUS_TIMEOUT_RESPONSE;
+    }while ((SENS_IN&DHT11_PIN));
 
-/**
- * DHT11 read function
- */
-int dht11_read(void)
-{
-    /**
-     * Starting protocol
-     */
-    __delay_cycles(1100000);        // Sensor needs time between readings
-    //loop_cnt = 0;
+    // 5. Leitura de 40 bits (5 bytes)
+    for (byte_cnt = 0; byte_cnt < 5; ++byte_cnt) {
+        for (bit_cnt = 0; bit_cnt < 8; ++bit_cnt) {
 
-    SENS_DIR |= DHT11; // Makes the pin OUTput
-    SENS_OUT &= ~DHT11;// Start condition generation for DHT11
-    __delay_cycles(25000); // delay ~20 milisecond for each scan
+            // Aguarda início do pulso HIGH
+            pulse_width = BIT_TIMEOUT_US;
+            do{
+                if (--pulse_width == 0)
+                    return STATUS_TIMEOUT_BIT;
+            }while (!(SENS_IN&DHT11_PIN));
 
-    SENS_OUT |= DHT11;// Start condition generation for DHT11
-    __delay_cycles(30); // Approximately 18 us
-    SENS_DIR &= ~DHT11; // Makes the pin input
+            // Mede duração do pulso HIGH
+            unsigned int start_time = TA0R;
+            while (SENS_IN & DHT11_PIN) {
+                if ((TA0R - start_time) > BIT_TIMEOUT_US)
+                    return STATUS_TIMEOUT_BIT;
+            }
+            pulse_width = TA0R - start_time;
 
-    // wait till the slave pulls the pin low
-    while((SENS_IN&DHT11) == DHT11);
-
-    /**
-     * DHT11 read function
-     *
-    */
-    unsigned char parity;
-
-    do
-    {
-        elapsed_time++; // check if the elapsed time = 80 uS
-        /*if(elapsed_time > 200)
-        {
-            return 1;
-        }*/
-    }
-    while(!(SENS_IN&DHT11));
-
-    if(elapsed_time <= 10)
-    {
-        elapsed_time = 0;
-        do
-        {
-            elapsed_time++; // check if the elapsed time = 80 uS
-            /*if(elapsed_time > 200)
-            {
-                return 1;
-            }*/
-        }
-        while((SENS_IN&DHT11)==DHT11);
-
-        if(elapsed_time <=10)// check if the elapsed time = 80 uS
-        {
-            SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
-            // Integer part of humidity
-            _pck.hum_int = recv_signal();
-            // Decimal part of humidity
-            _pck.hum_decimals = recv_signal();
-            // Integer part of temperature
-            _pck.tmp_int = recv_signal();
-            // Decimal part of temperature
-            _pck.tmp_decimals = recv_signal();
-            // Parity checksum
-            parity = recv_signal();
-            _pck.checksum = _pck.hum_int + _pck.hum_decimals + _pck.tmp_int + _pck.tmp_decimals;
-            SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
-        }
-        else
-        {
-            return 1;
+            // Interpreta bit com base na largura do pulso
+            if (pulse_width > ZERO_THRESHOLD_US) {
+                data[byte_cnt] |= (1 << (7 - bit_cnt));
+            }
         }
     }
-    else
-    {
-        return 1;
+
+    // 6. Verifica checksum
+    if (data[4] != (char)(data[0] + data[1] + data[2] + data[3])) {
+        return STATUS_CHECKSUM_ERROR;
     }
 
-    return ((_pck.checksum == parity) ? 0 : 1);
+    // 7. Armazena dados em FRAM
+    SYSCFG0 = FRWPPW | DFWP; // Libera escrita
+    _pck.hum_int = data[0];
+    _pck.hum_decimals = data[1];
+    _pck.tmp_int = data[2];
+    _pck.tmp_decimals = data[3];
+    _pck.checksum = data[4];
+    SYSCFG0 = FRWPPW | PFWP | DFWP; // Protege FRAM
+
+    return STATUS_OK;
 }
 // End of file

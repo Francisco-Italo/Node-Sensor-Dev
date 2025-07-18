@@ -15,7 +15,6 @@ enum dht11_status
     STATUS_TIMEOUT = -2
 };
 
-signed char recv_signal(void);
-int dht11_read(void);
+int dht11(void);
 
 #endif /* DHT_DHT11_H_ */

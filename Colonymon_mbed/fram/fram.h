@@ -35,12 +35,12 @@ union node_t
         /**
          * MPU accelerometer data type
          */
-        struct
+        /*struct
         {
             unsigned int xAxis;
             unsigned int yAxis;
             unsigned int zAxis;
-        }_mpu_pck;
+        }_mpu_pck;*/
         /**
          * HX711 data type
          */
@@ -51,7 +51,7 @@ union node_t
         }_weight_pck;
     }sensor_data;
 
-    unsigned char tx_block[24];
+    unsigned char tx_block[18];
 };
 extern union node_t _pck;
 

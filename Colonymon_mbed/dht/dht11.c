@@ -5,7 +5,7 @@
  *      Author: italo
  */
 #include <msp430.h>
-#include "../fram/fram.h"
+#include <fram/fram.h>
 #include "dht11.h"
 
 #define DHT11 BIT0
@@ -14,135 +14,136 @@
 #define SENS_DIR P1DIR
 #define SENS_INT P1IFG
 
-unsigned char elapsed_time;
-unsigned int loop;
+unsigned char elapsed_time,bit_cnt;
+unsigned char hum_int,hum_dec,tmp_int,tmp_dec,parity;
 
 /**
- * DHT11 comm. signal processing
+ * DHT11 function to read humidity, temperature and checksum
  */
-signed char recv_signal(void)
-{
-    char val = 0;
-    char bit_cnt;
-
-    for(bit_cnt=8;bit_cnt>0;--bit_cnt) // for humidity first byte
-    {
-        loop = 200;
-        // skip the lower 50 uS part
-        while(!(SENS_IN&DHT11))
-        {
-            loop--;
-            if(!loop)
-            {
-                return STATUS_TIMEOUT;
-            }
-        }
-
-        elapsed_time = 0;
-        do
-        {
-            elapsed_time++; // check if the elapsed time = 80 uS
-            if(elapsed_time > 200)
-            {
-                return STATUS_TIMEOUT;
-            }
-        }
-        while((SENS_IN&DHT11)==DHT11);
-        if(elapsed_time > 5)
-        {
-            val |= 0x01;
-        }
-
-        val <<= 1;
-    }
-
-    return (val>>=1);   // Return corrected value
-}
-
-/**
- * DHT11 read function
- */
-int dht11_read(void)
+int dht11(void)
 {
     /**
-     * Starting ptotocol
+     * Starting protocol
      */
-    __delay_cycles(1100000);        // Sensor needs time between readings
-
     SENS_DIR |= DHT11; // Makes the pin OUTput
     SENS_OUT &= ~DHT11;// Start condition generation for DHT11
-    __delay_cycles(25000); // delay ~20 milisecond for each scan
+    __delay_cycles(18000); // Delay ~18 ms for each scan
 
     SENS_OUT |= DHT11;// Start condition generation for DHT11
-    __delay_cycles(30); // Approximately 18 us
+    __delay_cycles(40); // Delay ~40 us
     SENS_DIR &= ~DHT11; // Makes the pin input
 
-    loop = 10000;
-    // wait till the slave pulls the pin low
-    while((SENS_IN&DHT11) == DHT11)
-    {
-        loop--;
-        if(!loop)
-        {
-            return STATUS_TIMEOUT;
-        }
-    }
-
-    /**
-     * DHT11 read function
-     *
-    */
-    unsigned char parity;
-
-    elapsed_time = 0;
+    ///////////////// DHT11 has responded /////////////////////////////
     do
     {
-        elapsed_time++; // check if the elapsed time = 80 uS
-        if(elapsed_time > 200)
-        {
-            return STATUS_TIMEOUT;
-        }
+        elapsed_time++; 
     }
-    while(!(SENS_IN&DHT11));
-
-    if(elapsed_time <= 10)
+    while ((SENS_IN&DHT11) == 0);
+    
+    if(elapsed_time <= 10)      // Check if the elapsed time = 80 uS
     {
         elapsed_time = 0;
-        do
+        do 
         {
-            elapsed_time++; // check if the elapsed time = 80 uS
-            if(elapsed_time > 200)
-            {
-                return STATUS_TIMEOUT;
-            }
+            elapsed_time++;
         }
-        while((SENS_IN&DHT11)==DHT11);
-
-        if(elapsed_time <=10)// check if the elapsed time = 80 uS
+        while ((SENS_IN&DHT11)==DHT11);
+        
+        if(elapsed_time <=10)       // Check if the elapsed time = 80 uS
         {
-            signed char buff;
-            SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
-            // Integer part of humidity
-            buff = recv_signal();
-            if(buff != STATUS_TIMEOUT) _pck.sensor_data._dht_pck.hum_int = buff;
-            else _pck.sensor_data._dht_pck.hum_int = 50;
-            // Decimal part of humidity
-            buff = recv_signal();
-            if(buff != STATUS_TIMEOUT) _pck.sensor_data._dht_pck.hum_decimals = buff;
-            // Integer part of temperature
-            buff = recv_signal();
-            if(buff != STATUS_TIMEOUT) _pck.sensor_data._dht_pck.tmp_int = buff;
-            else _pck.sensor_data._dht_pck.tmp_int = 30;
-            // Decimal part of temperature
-            buff = recv_signal();
-            if(buff != STATUS_TIMEOUT) _pck.sensor_data._dht_pck.tmp_decimals = buff;
-            // Parity checksum
-            parity = recv_signal();
-            _pck.sensor_data._dht_pck.checksum = _pck.sensor_data._dht_pck.hum_int +
-                    _pck.sensor_data._dht_pck.hum_decimals +
-                    _pck.sensor_data._dht_pck.tmp_int +
-                    _pck.sensor_data._dht_pck.tmp_decimals;
-            SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
+            ///////// humidity integer/////////////
+            for(bit_cnt=8;bit_cnt>0;--bit_cnt) 
+            {
+                while ((P1IN&DHT11)==0); // skip the lower 50 uS part
+                
+                elapsed_time = 0;
+                do
+                {
+                    elapsed_time++; // check if the elapsed time = 80 uS
+                }
+                while ((P1IN&DHT11)==DHT11);
+                
+                if(elapsed_time>5)
+                {
+                    hum_int |= 0x01;
+                }
+                
+                hum_int <<= 1;
+            }
+            ///////// humidity decimal/////////////
+            for(bit_cnt=8;bit_cnt>0;--bit_cnt) 
+            {
+                while ((P1IN&DHT11)==0); // skip the lower 50 uS part
+                
+                elapsed_time = 0;
+                do
+                {
+                    elapsed_time++; // check if the elapsed time = 80 uS
+                }
+                while ((P1IN&DHT11)==DHT11);
+                
+                if(elapsed_time>5)
+                {
+                    hum_dec |= 0x01;
+                }
+                hum_dec <<= 1;
+            }
+            ///////// temperature integer/////////////
+            for(bit_cnt=8;bit_cnt>0;--bit_cnt) 
+            {
+                while ((P1IN&DHT11)==0); // skip the lower 50 uS part
+                
+                elapsed_time = 0;
+                do
+                {
+                    elapsed_time++; // check if the elapsed time = 80 uS
+                }
+                while ((P1IN&DHT11)==DHT11);
+                
+                if(elapsed_time>5)
+                {
+                    tmp_int |= 0x01;
+                }
+                
+                tmp_int <<= 1;
+            }
+            ///////// temperature decimal/////////////
+            for(bit_cnt=8;bit_cnt>0;--bit_cnt) 
+            {
+                while ((P1IN&DHT11)==0); // skip the lower 50 uS part
+                
+                elapsed_time = 0;
+                do
+                {
+                    elapsed_time++; // check if the elapsed time = 80 uS
+                }
+                while ((P1IN&DHT11)==DHT11);
+                
+                if(elapsed_time>5)
+                {
+                    tmp_dec |= 0x01;
+                }
+                
+                tmp_dec <<= 1;
+            }
+            /////////Parity/////////////
+            for(bit_cnt=8;bit_cnt>0;--bit_cnt) 
+            {
+                while ((P1IN&DHT11)==0); // skip the lower 50 uS part
+                
+                elapsed_time = 0;
+                do
+                {
+                    elapsed_time++; // check if the elapsed time = 80 uS
+                }
+                while ((P1IN&DHT11)==DHT11);
+                
+                if(elapsed_time>5)
+                {
+                    parity |= 0x01;
+                }
+                parity <<= 1;
+            }
         }
         else
         {
@@ -153,7 +154,12 @@ int dht11_read(void)
     {
         return STATUS_TIMEOUT;
     }
+    SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
+    _pck.sensor_data._dht_pck.hum_int = (hum_int>>1); _pck.sensor_data._dht_pck.hum_decimals = (hum_dec>>1);
+    _pck.sensor_data._dht_pck.tmp_int = (tmp_int>>1); _pck.sensor_data._dht_pck.tmp_decimals = (tmp_dec>>1);
+    _pck.sensor_data._dht_pck.checksum = (parity>>1);
+    SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
 
-    return ((_pck.sensor_data._dht_pck.checksum == parity) ? STATUS_OK : STATUS_CHECKSUM_ERR);
+    return ((hum_int+hum_dec+tmp_int+tmp_dec == _pck.sensor_data._dht_pck.checksum) ? STATUS_OK : STATUS_CHECKSUM_ERR);
 }
 // End of file

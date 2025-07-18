@@ -5,7 +5,6 @@
  *      Author: italo
  */
 #include <fram/fram.h>
-
 #include <msp430.h>
 #include "i2c.h"
 #include "sensors.h"
@@ -13,7 +12,7 @@
 /**
  * MPU-6050 & CCS811 relevant register addresses
  */
-static const unsigned char MPU_ADDR     = 0x68;      // ADO = GND. Else, 0x69
+//static const unsigned char MPU_ADDR     = 0x68;      // ADO = GND. Else, 0x69
 static const unsigned char CCS811_ADDR  = 0x5A;
 
 //-------------------------------------------------------------------------------------------------//
@@ -22,7 +21,7 @@ static const unsigned char CCS811_ADDR  = 0x5A;
 /**
  * MPU setup
  */
-void acc_setup()
+/*void acc_setup()
 {
     static const unsigned char PWR_MGMT_1   = 0x6B;
 
@@ -34,11 +33,11 @@ void acc_setup()
     i2c_trans(slaveAddress, WRITE, TX_ByteCtr);
     __delay_cycles(32000);                // According to datasheet, hold ~30 ms
                                             // Because of gyroscope based clock oscillator
-}
+}*/
 /**
  * Communication with accelerometer device
  */
-void acc_comm()
+/*void acc_comm()
 {
     static const unsigned char ACCEL_XOUT_H = 0x3B;
 
@@ -56,7 +55,7 @@ void acc_comm()
     _pck.sensor_data._mpu_pck.zAxis  = RX_Data[1] << 8 | RX_Data[0];
     SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
 
-}
+}*/
 //-------------------------------------------------------------------------------------------------//
 // Gases sensor routines
 //-------------------------------------------------------------------------------------------------//

@@ -8,10 +8,6 @@
 #include <msp430.h>
 #include "uart.h"
 
-//#define MCLK_FREQ_MHZ 1                     // MCLK = 1MHz
-//#define DCODIV_1MHZ   30
-//#define DECIMAL_PLACES 2
-
 void uart_init(void)
 {
     // Configure UART pins

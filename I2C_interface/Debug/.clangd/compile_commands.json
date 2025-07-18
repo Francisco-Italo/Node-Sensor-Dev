@@ -1,0 +1,32 @@
+[
+   {
+      "directory" : "/home/franc_italo/workspace_ccstheia/I2C_interface/Debug",
+      "command"   : "clang++ -I\"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/include\" -I\"/home/franc_italo/workspace_ccstheia/I2C_interface\" -I\"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include\" -D__MSP430FR2433__",
+      "file"      : "/home/franc_italo/workspace_ccstheia/I2C_interface/clk/clk.c"
+   },
+   {
+      "directory" : "/home/franc_italo/workspace_ccstheia/I2C_interface/Debug",
+      "command"   : "clang++ -I\"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/include\" -I\"/home/franc_italo/workspace_ccstheia/I2C_interface\" -I\"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include\" -D__MSP430FR2433__",
+      "file"      : "/home/franc_italo/workspace_ccstheia/I2C_interface/fram/var.c"
+   },
+   {
+      "directory" : "/home/franc_italo/workspace_ccstheia/I2C_interface/Debug",
+      "command"   : "clang++ -I\"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/include\" -I\"/home/franc_italo/workspace_ccstheia/I2C_interface\" -I\"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include\" -D__MSP430FR2433__",
+      "file"      : "/home/franc_italo/workspace_ccstheia/I2C_interface/i2c/i2c.c"
+   },
+   {
+      "directory" : "/home/franc_italo/workspace_ccstheia/I2C_interface/Debug",
+      "command"   : "clang++ -I\"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/include\" -I\"/home/franc_italo/workspace_ccstheia/I2C_interface\" -I\"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include\" -D__MSP430FR2433__",
+      "file"      : "/home/franc_italo/workspace_ccstheia/I2C_interface/i2c/sensors.c"
+   },
+   {
+      "directory" : "/home/franc_italo/workspace_ccstheia/I2C_interface/Debug",
+      "command"   : "clang++ -I\"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/include\" -I\"/home/franc_italo/workspace_ccstheia/I2C_interface\" -I\"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include\" -D__MSP430FR2433__",
+      "file"      : "/home/franc_italo/workspace_ccstheia/I2C_interface/main.c"
+   },
+   {
+      "directory" : "/home/franc_italo/workspace_ccstheia/I2C_interface/Debug",
+      "command"   : "clang++ -I\"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/include\" -I\"/home/franc_italo/workspace_ccstheia/I2C_interface\" -I\"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include\" -D__MSP430FR2433__",
+      "file"      : "/home/franc_italo/workspace_ccstheia/I2C_interface/uart/uart.c"
+   }
+]

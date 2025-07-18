@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-CG_TOOL_ROOT := /home/italo/ti/ccs1270/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS
+CG_TOOL_ROOT := /home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -133,7 +133,7 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 WDT.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: MSP430 Linker'
-	"/home/italo/ti/ccs1270/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/bin/cl430" -vmspx --use_hw_mpy=F5 --advice:power=all --advice:hw_config=all --define=__MSP430FR2433__ -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 -z -m"WDT.map" --heap_size=160 --stack_size=160 --cinit_hold_wdt=on -i"/home/italo/ti/ccs1270/ccs/ccs_base/msp430/include" -i"/home/italo/ti/ccs1270/ccs/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"/home/italo/ti/ccs1270/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/lib" -i"/home/italo/ti/ccs1270/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="WDT_linkInfo.xml" --use_hw_mpy=F5 --rom_model -o "WDT.out" $(ORDERED_OBJS)
+	"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/bin/cl430" -vmspx --use_hw_mpy=F5 --advice:power=all --advice:hw_config=all --define=__MSP430FR2433__ -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 -z -m"WDT.map" --heap_size=160 --stack_size=160 --cinit_hold_wdt=on -i"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/include" -i"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/lib" -i"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="WDT_linkInfo.xml" --use_hw_mpy=F5 --rom_model -o "WDT.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 

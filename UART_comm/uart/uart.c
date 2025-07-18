@@ -1,24 +1,16 @@
 /*
  * uart.c
  *
- *  Created on: 30 de nov de 2024
+ *  Created on: 3 de dez de 2024
  *      Author: italo
  */
-#include "../msp_conf.h"
+
+#include <msp430.h>
 #include "uart.h"
 
-void ser_output(unsigned char* str)
+void uart_init(void)
 {
-    while(*str)
-    {
-        while(!(UCA0IFG&UCTXIFG));
-        UCA0TXBUF = *str++;
-    }
-}
-
-void uart_setup(void)
-{
-    // Configure pins to UART mode
+    // Configure UART pins
     P1SEL0 |= BIT4 | BIT5;                    // set 2-UART pin as second function
 
     // Configure UART
@@ -32,5 +24,17 @@ void uart_setup(void)
                                                 // UCBRFx = int (0.51*16) = 8; 16 bcz of UCOS16
                                                 // UCBRSx value = 0x20
     UCA0CTLW0 &= ~UCSWRST;                    // Initialize eUSCI
+}
+
+void uart_out(const void *data, unsigned char length)
+{
+  const char* buff = (const char*)data;
+  char i;
+  for(i = 0; i < length; ++i)
+  {
+      while(!(UCA0IFG&UCTXIFG));
+      UCA0TXBUF = buff[i];
+      //_delay_cycles(2000);        // Logic analyzer crutch
+  }
 }
 // End of file

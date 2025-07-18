@@ -12,7 +12,7 @@ struct temp_hum_pck
 {
     unsigned char hum_int,hum_decimals;
     unsigned char tmp_int,tmp_decimals;
-    unsigned char checksum;
+    unsigned int checksum;
 };
 
 extern struct temp_hum_pck _pck;

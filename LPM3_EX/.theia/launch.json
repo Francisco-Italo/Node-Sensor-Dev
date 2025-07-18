@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "LPM3_EX",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "LPM3_EX",
+                "resourceId": "/LPM3_EX"
+            },
+            "debuggerSettings": {
+                "targetConfigs/MSP430FR2433.ccxml": {
+                    "TI MSP430 USB1/MSP430": {
+                        "data": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n<PropertyValues/>\n"
+                    }
+                }
+            }
+        }
+    ]
+}

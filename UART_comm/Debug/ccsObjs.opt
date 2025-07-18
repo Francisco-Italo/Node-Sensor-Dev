@@ -1,4 +1,5 @@
 "./main.obj"
+"./E32/E32.obj"
 "./clk/clk.obj"
 "./uart/uart.obj"
 "../lnk_msp430fr2433.cmd"

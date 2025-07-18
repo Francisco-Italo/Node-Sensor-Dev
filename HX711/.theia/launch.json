@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "HX711",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "HX711",
+                "resourceId": "/HX711"
+            }
+        },
+        {
+            "name": "LPM3_EX",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "LPM3_EX",
+                "resourceId": "/LPM3_EX"
+            }
+        }
+    ]
+}

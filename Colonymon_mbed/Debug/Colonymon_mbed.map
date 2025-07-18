@@ -1,10 +1,10 @@
 ******************************************************************************
                   MSP430 Linker Unix v21.6.1                   
 ******************************************************************************
->> Linked Fri Jan 24 16:46:10 2025
+>> Linked Mon Feb 24 14:31:35 2025
 
 OUTPUT FILE NAME:   <Colonymon_mbed.out>
-ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 0000cb1a
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 0000caac
 
 
 MEMORY CONFIGURATION
@@ -15,8 +15,8 @@ MEMORY CONFIGURATION
   PERIPHERALS_8BIT      00000010   000000f0  00000000  000000f0  RWIX
   PERIPHERALS_16BIT     00000100   00000100  00000000  00000100  RWIX
   INFOA                 00001800   00000200  00000000  00000200  RWIX
-  RAM                   00002000   00001000  000000b1  00000f4f  RWIX
-  FRAM                  0000c400   00003b80  0000076c  00003414  RWIX
+  RAM                   00002000   00001000  000000b4  00000f4c  RWIX
+  FRAM                  0000c400   00003b80  00000716  0000346a  RWIX
   JTAGSIGNATURE         0000ff80   00000004  00000004  00000000  RWIX  ffff 
   BSLSIGNATURE          0000ff84   00000004  00000004  00000000  RWIX  ffff 
   INT00                 0000ff88   00000002  00000000  00000002  RWIX
@@ -87,68 +87,69 @@ SECTION ALLOCATION MAP
 section   page    origin      length       input sections
 --------  ----  ----------  ----------   ----------------
 .TI.persistent 
-*          0    0000c400    00000018     
-                  0000c400    00000018     fram.obj (.TI.persistent:_pck)
+*          0    0000c400    00000012     
+                  0000c400    00000012     fram.obj (.TI.persistent:_pck)
 
-.cinit     0    0000c418    00000012     
-                  0000c418    00000006     (.cinit..bss.load) [load image, compression = zero_init]
-                  0000c41e    00000004     (__TI_handler_table)
-                  0000c422    00000008     (__TI_cinit_table)
+.cinit     0    0000c412    00000012     
+                  0000c412    00000006     (.cinit..bss.load) [load image, compression = zero_init]
+                  0000c418    00000004     (__TI_handler_table)
+                  0000c41c    00000008     (__TI_cinit_table)
 
-.pinit     0    0000c42a    00000000     UNINITIALIZED
+.pinit     0    0000c424    00000000     UNINITIALIZED
 
-.binit     0    0000c42a    00000000     
+.binit     0    0000c424    00000000     
 
 .init_array 
-*          0    0000c42a    00000000     UNINITIALIZED
+*          0    0000c424    00000000     UNINITIALIZED
 
 .mspabi.exidx 
-*          0    0000c42a    00000000     UNINITIALIZED
+*          0    0000c424    00000000     UNINITIALIZED
 
 .mspabi.extab 
-*          0    0000c42a    00000000     UNINITIALIZED
+*          0    0000c424    00000000     UNINITIALIZED
 
-.const     0    0000c42a    00000000     UNINITIALIZED
+.const     0    0000c424    00000000     UNINITIALIZED
 
-.text      0    0000c42a    00000742     
-                  0000c42a    00000126     dht11.obj (.text:dht11_read)
-                  0000c550    000000be     clk.obj (.text:Software_Trim)
-                  0000c60e    000000b2     main.obj (.text:main)
-                  0000c6c0    00000074     sensors.obj (.text:acc_comm)
-                  0000c734    0000006a     rts430x_lc_sd_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit_hold_wdt:__TI_auto_init_nobinit_nopinit_hold_wdt)
-                  0000c79e    0000006a     hx711.obj (.text:scale_read)
-                  0000c808    0000005e     sensors.obj (.text:gas_comm)
-                  0000c866    00000054     dht11.obj (.text:recv_signal)
-                  0000c8ba    00000046     i2c.obj (.text:_isr:USCIB0_ISR)
-                  0000c900    00000040     i2c.obj (.text:i2c_trans)
-                  0000c940    0000003e     rts430x_lc_sd_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init_nomemset:__TI_zero_init_nomemset)
-                  0000c97e    0000003e                            : lsr32.asm.obj (.text:l_lsr_const)
-                  0000c9bc    0000003e     hx711.obj (.text:scale_tare)
-                  0000c9fa    0000003a     sensors.obj (.text:gas_setup)
-                  0000ca34    00000032     sensors.obj (.text:acc_setup)
-                  0000ca66    0000002a     clk.obj (.text:clock_setup)
-                  0000ca90    0000002a     i2c.obj (.text:i2c_init)
-                  0000caba    00000026     uart.obj (.text:uart_init)
-                  0000cae0    0000001e     hx711.obj (.text:scale_init)
-                  0000cafe    0000001c     main.obj (.text:_isr:WDT_ISR)
-                  0000cb1a    0000001c     rts430x_lc_sd_eabi.lib : boot.c.obj (.text:_isr:_c_int00_noargs)
-                  0000cb36    0000001c     uart.obj (.text:uart_out)
-                  0000cb52    00000008     rts430x_lc_sd_eabi.lib : isr_trap.asm.obj (.text:_isr:__TI_ISR_TRAP)
-                  0000cb5a    00000006                            : exit.c.obj (.text:abort)
-                  0000cb60    00000006     main.obj (.text:init_gpio_unused)
-                  0000cb66    00000004     rts430x_lc_sd_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
-                  0000cb6a    00000002                            : startup.c.obj (.text:_system_post_cinit)
+.text      0    0000c424    000006f2     
+                  0000c424    000001d0     dht11.obj (.text:dht11)
+                  0000c5f4    000000be     clk.obj (.text:Software_Trim)
+                  0000c6b2    000000b6     main.obj (.text:main)
+                  0000c768    0000006a     rts430x_lc_sd_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit_hold_wdt:__TI_auto_init_nobinit_nopinit_hold_wdt)
+                  0000c7d2    0000006a     hx711.obj (.text:scale_read)
+                  0000c83c    0000005e     sensors.obj (.text:gas_comm)
+                  0000c89a    00000046     i2c.obj (.text:_isr:USCIB0_ISR)
+                  0000c8e0    00000040     i2c.obj (.text:i2c_trans)
+                  0000c920    0000003e     rts430x_lc_sd_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init_nomemset:__TI_zero_init_nomemset)
+                  0000c95e    0000003e                            : lsr32.asm.obj (.text:l_lsr_const)
+                  0000c99c    0000003e     hx711.obj (.text:scale_tare)
+                  0000c9da    0000003a     sensors.obj (.text:gas_setup)
+                  0000ca14    0000002a     clk.obj (.text:clock_setup)
+                  0000ca3e    0000002a     i2c.obj (.text:i2c_init)
+                  0000ca68    00000026     uart.obj (.text:uart_init)
+                  0000ca8e    0000001e     hx711.obj (.text:scale_init)
+                  0000caac    0000001c     rts430x_lc_sd_eabi.lib : boot.c.obj (.text:_isr:_c_int00_noargs)
+                  0000cac8    0000001c     uart.obj (.text:uart_out)
+                  0000cae4    00000018     main.obj (.text:_isr:WDT_ISR)
+                  0000cafc    00000008     rts430x_lc_sd_eabi.lib : isr_trap.asm.obj (.text:_isr:__TI_ISR_TRAP)
+                  0000cb04    00000006                            : exit.c.obj (.text:abort)
+                  0000cb0a    00000006     main.obj (.text:init_gpio_unused)
+                  0000cb10    00000004     rts430x_lc_sd_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
+                  0000cb14    00000002                            : startup.c.obj (.text:_system_post_cinit)
 
-.bss       0    00002000    00000011     UNINITIALIZED
+.bss       0    00002000    00000014     UNINITIALIZED
                   00002000    00000006     (.common:RX_Data)
                   00002006    00000002     (.common:TX_Data)
-                  00002008    00000002     (.common:loop)
-                  0000200a    00000002     (.common:wdt_cnt)
-                  0000200c    00000001     (.common:RX_ByteCtr)
-                  0000200d    00000001     (.common:TX_ByteCtr)
-                  0000200e    00000001     (.common:elapsed_time)
-                  0000200f    00000001     (.common:func_flag)
-                  00002010    00000001     (.common:slaveAddress)
+                  00002008    00000002     (.common:wdt_cnt)
+                  0000200a    00000001     (.common:RX_ByteCtr)
+                  0000200b    00000001     (.common:TX_ByteCtr)
+                  0000200c    00000001     (.common:bit_cnt)
+                  0000200d    00000001     (.common:elapsed_time)
+                  0000200e    00000001     (.common:hum_dec)
+                  0000200f    00000001     (.common:hum_int)
+                  00002010    00000001     (.common:parity)
+                  00002011    00000001     (.common:slaveAddress)
+                  00002012    00000001     (.common:tmp_dec)
+                  00002013    00000001     (.common:tmp_int)
 
 .stack     0    00002f60    000000a0     UNINITIALIZED
                   00002f60    00000002     rts430x_lc_sd_eabi.lib : boot.c.obj (.stack)
@@ -230,9 +231,9 @@ MODULE SUMMARY
        Module                 code   ro data   rw data
        ------                 ----   -------   -------
     ./
-       main.obj               212    2         14     
+       main.obj               212    2         13     
     +--+----------------------+------+---------+---------+
-       Total:                 212    2         14     
+       Total:                 212    2         13     
                                                       
     ./clk/
        clk.obj                232    0         0      
@@ -240,14 +241,14 @@ MODULE SUMMARY
        Total:                 232    0         0      
                                                       
     ./dht/
-       dht11.obj              378    0         3      
+       dht11.obj              464    0         7      
     +--+----------------------+------+---------+---------+
-       Total:                 378    0         3      
+       Total:                 464    0         7      
                                                       
     ./fram/
-       fram.obj               0      0         24     
+       fram.obj               0      0         18     
     +--+----------------------+------+---------+---------+
-       Total:                 0      0         24     
+       Total:                 0      0         18     
                                                       
     ./hx711/
        hx711.obj              198    0         0      
@@ -255,17 +256,17 @@ MODULE SUMMARY
        Total:                 198    0         0      
                                                       
     ./i2c/
-       sensors.obj            318    0         0      
        i2c.obj                176    2         0      
+       sensors.obj            152    0         0      
     +--+----------------------+------+---------+---------+
-       Total:                 494    2         0      
+       Total:                 328    2         0      
                                                       
     ./uart/
        uart.obj               66     0         0      
     +--+----------------------+------+---------+---------+
        Total:                 66     0         0      
                                                       
-    /home/italo/ti/ccs1270/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/lib/rts430x_lc_sd_eabi.lib
+    /home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/lib/rts430x_lc_sd_eabi.lib
        autoinit.c.obj         106    0         0      
        copy_zero_init.c.obj   62     0         0      
        lsr32.asm.obj          62     0         0      
@@ -296,18 +297,18 @@ MODULE SUMMARY
        Stack:                 0      0         160    
        Linker Generated:      0      18        0      
     +--+----------------------+------+---------+---------+
-       Grand Total:           1858   56        201    
+       Grand Total:           1778   56        198    
 
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 0000c422 records: 1, size/record: 8, table size: 8
-	.bss: load addr=0000c418, load size=00000006 bytes, run addr=00002000, run size=00000011 bytes, compression=zero_init
+__TI_cinit_table @ 0000c41c records: 1, size/record: 8, table size: 8
+	.bss: load addr=0000c412, load size=00000006 bytes, run addr=00002000, run size=00000014 bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 0000c41e records: 1, size/record: 4, table size: 4
+__TI_handler_table @ 0000c418 records: 1, size/record: 4, table size: 4
 	index: 0, handler: __TI_zero_init
 
 
@@ -393,7 +394,7 @@ address   name
 00000672  BAKMEM9                                
 00000673  BAKMEM9_H                              
 00000672  BAKMEM9_L                              
-0000cb5a  C$$EXIT                                
+0000cb04  C$$EXIT                                
 000001c0  CRCDI                                  
 000001c2  CRCDIRB                                
 000001c3  CRCDIRB_H                              
@@ -585,7 +586,7 @@ address   name
 00000308  RTCMOD                                 
 00000309  RTCMOD_H                               
 00000308  RTCMOD_L                               
-0000200c  RX_ByteCtr                             
+0000200a  RX_ByteCtr                             
 00002000  RX_Data                                
 00000100  SFRIE1                                 
 00000101  SFRIE1_H                               
@@ -641,7 +642,7 @@ address   name
 0000015a  SYSUNIV                                
 0000015b  SYSUNIV_H                              
 0000015a  SYSUNIV_L                              
-0000c550  Software_Trim                          
+0000c5f4  Software_Trim                          
 00000392  TA0CCR0                                
 00000394  TA0CCR1                                
 00000396  TA0CCR2                                
@@ -678,7 +679,7 @@ address   name
 00000460  TA3EX0                                 
 0000046e  TA3IV                                  
 00000450  TA3R                                   
-0000200d  TX_ByteCtr                             
+0000200b  TX_ByteCtr                             
 00002006  TX_Data                                
 00000510  UCA0ABCTL                              
 00000506  UCA0BRW                                
@@ -789,20 +790,20 @@ address   name
 0000054e  UCB0TXBUF                              
 0000054f  UCB0TXBUF_H                            
 0000054e  UCB0TXBUF_L                            
-0000c8ba  USCIB0_ISR                             
+0000c89a  USCIB0_ISR                             
 000001cc  WDTCTL                                 
 000001cd  WDTCTL_H                               
 000001cc  WDTCTL_L                               
-0000cafe  WDT_ISR                                
+0000cae4  WDT_ISR                                
 00003000  __STACK_END                            
 000000a0  __STACK_SIZE                           
-0000c422  __TI_CINIT_Base                        
-0000c42a  __TI_CINIT_Limit                       
-0000c42a  __TI_CINIT_Warm                        
-0000c41e  __TI_Handler_Table_Base                
-0000c422  __TI_Handler_Table_Limit               
-0000cb52  __TI_ISR_TRAP                          
-0000c734  __TI_auto_init_nobinit_nopinit_hold_wdt
+0000c41c  __TI_CINIT_Base                        
+0000c424  __TI_CINIT_Limit                       
+0000c424  __TI_CINIT_Warm                        
+0000c418  __TI_Handler_Table_Base                
+0000c41c  __TI_Handler_Table_Limit               
+0000cafc  __TI_ISR_TRAP                          
+0000c768  __TI_auto_init_nobinit_nopinit_hold_wdt
 0000ffda  __TI_int41                             
 0000ffdc  __TI_int42                             
 0000ffde  __TI_int43                             
@@ -824,51 +825,52 @@ address   name
 ffffffff  __TI_pprof_out_hndl                    
 ffffffff  __TI_prof_data_size                    
 ffffffff  __TI_prof_data_start                   
-0000c940  __TI_zero_init_nomemset                
+0000c920  __TI_zero_init_nomemset                
 ffffffff  __c_args__                             
-0000c9b6  __mspabi_srll_1                        
-0000c992  __mspabi_srll_10                       
-0000c98e  __mspabi_srll_11                       
-0000c98a  __mspabi_srll_12                       
-0000c986  __mspabi_srll_13                       
-0000c982  __mspabi_srll_14                       
-0000c97e  __mspabi_srll_15                       
-0000c9b2  __mspabi_srll_2                        
-0000c9ae  __mspabi_srll_3                        
-0000c9aa  __mspabi_srll_4                        
-0000c9a6  __mspabi_srll_5                        
-0000c9a2  __mspabi_srll_6                        
-0000c99e  __mspabi_srll_7                        
-0000c99a  __mspabi_srll_8                        
-0000c996  __mspabi_srll_9                        
-0000cb1a  _c_int00_noargs                        
+0000c996  __mspabi_srll_1                        
+0000c972  __mspabi_srll_10                       
+0000c96e  __mspabi_srll_11                       
+0000c96a  __mspabi_srll_12                       
+0000c966  __mspabi_srll_13                       
+0000c962  __mspabi_srll_14                       
+0000c95e  __mspabi_srll_15                       
+0000c992  __mspabi_srll_2                        
+0000c98e  __mspabi_srll_3                        
+0000c98a  __mspabi_srll_4                        
+0000c986  __mspabi_srll_5                        
+0000c982  __mspabi_srll_6                        
+0000c97e  __mspabi_srll_7                        
+0000c97a  __mspabi_srll_8                        
+0000c976  __mspabi_srll_9                        
+0000caac  _c_int00_noargs                        
 0000c400  _pck                                   
 0000fffe  _reset_vector                          
 00002f60  _stack                                 
-0000cb6a  _system_post_cinit                     
-0000cb66  _system_pre_init                       
-0000cb5a  abort                                  
-0000c6c0  acc_comm                               
-0000ca34  acc_setup                              
-0000ca66  clock_setup                            
-0000c42a  dht11_read                             
-0000200e  elapsed_time                           
-0000200f  func_flag                              
-0000c808  gas_comm                               
-0000c9fa  gas_setup                              
-0000ca90  i2c_init                               
-0000c900  i2c_trans                              
-0000cb60  init_gpio_unused                       
-00002008  loop                                   
-0000c60e  main                                   
-0000c866  recv_signal                            
-0000cae0  scale_init                             
-0000c79e  scale_read                             
-0000c9bc  scale_tare                             
-00002010  slaveAddress                           
-0000caba  uart_init                              
-0000cb36  uart_out                               
-0000200a  wdt_cnt                                
+0000cb14  _system_post_cinit                     
+0000cb10  _system_pre_init                       
+0000cb04  abort                                  
+0000200c  bit_cnt                                
+0000ca14  clock_setup                            
+0000c424  dht11                                  
+0000200d  elapsed_time                           
+0000c83c  gas_comm                               
+0000c9da  gas_setup                              
+0000200e  hum_dec                                
+0000200f  hum_int                                
+0000ca3e  i2c_init                               
+0000c8e0  i2c_trans                              
+0000cb0a  init_gpio_unused                       
+0000c6b2  main                                   
+00002010  parity                                 
+0000ca8e  scale_init                             
+0000c7d2  scale_read                             
+0000c99c  scale_tare                             
+00002011  slaveAddress                           
+00002012  tmp_dec                                
+00002013  tmp_int                                
+0000ca68  uart_init                              
+0000cac8  uart_out                               
+00002008  wdt_cnt                                
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -1349,63 +1351,64 @@ address   name
 0000071f  ADCIV_H                                
 00002000  RX_Data                                
 00002006  TX_Data                                
-00002008  loop                                   
-0000200a  wdt_cnt                                
-0000200c  RX_ByteCtr                             
-0000200d  TX_ByteCtr                             
-0000200e  elapsed_time                           
-0000200f  func_flag                              
-00002010  slaveAddress                           
+00002008  wdt_cnt                                
+0000200a  RX_ByteCtr                             
+0000200b  TX_ByteCtr                             
+0000200c  bit_cnt                                
+0000200d  elapsed_time                           
+0000200e  hum_dec                                
+0000200f  hum_int                                
+00002010  parity                                 
+00002011  slaveAddress                           
+00002012  tmp_dec                                
+00002013  tmp_int                                
 00002f60  _stack                                 
 00003000  __STACK_END                            
 0000c400  _pck                                   
-0000c41e  __TI_Handler_Table_Base                
-0000c422  __TI_CINIT_Base                        
-0000c422  __TI_Handler_Table_Limit               
-0000c42a  __TI_CINIT_Limit                       
-0000c42a  __TI_CINIT_Warm                        
-0000c42a  dht11_read                             
-0000c550  Software_Trim                          
-0000c60e  main                                   
-0000c6c0  acc_comm                               
-0000c734  __TI_auto_init_nobinit_nopinit_hold_wdt
-0000c79e  scale_read                             
-0000c808  gas_comm                               
-0000c866  recv_signal                            
-0000c8ba  USCIB0_ISR                             
-0000c900  i2c_trans                              
-0000c940  __TI_zero_init_nomemset                
-0000c97e  __mspabi_srll_15                       
-0000c982  __mspabi_srll_14                       
-0000c986  __mspabi_srll_13                       
-0000c98a  __mspabi_srll_12                       
-0000c98e  __mspabi_srll_11                       
-0000c992  __mspabi_srll_10                       
-0000c996  __mspabi_srll_9                        
-0000c99a  __mspabi_srll_8                        
-0000c99e  __mspabi_srll_7                        
-0000c9a2  __mspabi_srll_6                        
-0000c9a6  __mspabi_srll_5                        
-0000c9aa  __mspabi_srll_4                        
-0000c9ae  __mspabi_srll_3                        
-0000c9b2  __mspabi_srll_2                        
-0000c9b6  __mspabi_srll_1                        
-0000c9bc  scale_tare                             
-0000c9fa  gas_setup                              
-0000ca34  acc_setup                              
-0000ca66  clock_setup                            
-0000ca90  i2c_init                               
-0000caba  uart_init                              
-0000cae0  scale_init                             
-0000cafe  WDT_ISR                                
-0000cb1a  _c_int00_noargs                        
-0000cb36  uart_out                               
-0000cb52  __TI_ISR_TRAP                          
-0000cb5a  C$$EXIT                                
-0000cb5a  abort                                  
-0000cb60  init_gpio_unused                       
-0000cb66  _system_pre_init                       
-0000cb6a  _system_post_cinit                     
+0000c418  __TI_Handler_Table_Base                
+0000c41c  __TI_CINIT_Base                        
+0000c41c  __TI_Handler_Table_Limit               
+0000c424  __TI_CINIT_Limit                       
+0000c424  __TI_CINIT_Warm                        
+0000c424  dht11                                  
+0000c5f4  Software_Trim                          
+0000c6b2  main                                   
+0000c768  __TI_auto_init_nobinit_nopinit_hold_wdt
+0000c7d2  scale_read                             
+0000c83c  gas_comm                               
+0000c89a  USCIB0_ISR                             
+0000c8e0  i2c_trans                              
+0000c920  __TI_zero_init_nomemset                
+0000c95e  __mspabi_srll_15                       
+0000c962  __mspabi_srll_14                       
+0000c966  __mspabi_srll_13                       
+0000c96a  __mspabi_srll_12                       
+0000c96e  __mspabi_srll_11                       
+0000c972  __mspabi_srll_10                       
+0000c976  __mspabi_srll_9                        
+0000c97a  __mspabi_srll_8                        
+0000c97e  __mspabi_srll_7                        
+0000c982  __mspabi_srll_6                        
+0000c986  __mspabi_srll_5                        
+0000c98a  __mspabi_srll_4                        
+0000c98e  __mspabi_srll_3                        
+0000c992  __mspabi_srll_2                        
+0000c996  __mspabi_srll_1                        
+0000c99c  scale_tare                             
+0000c9da  gas_setup                              
+0000ca14  clock_setup                            
+0000ca3e  i2c_init                               
+0000ca68  uart_init                              
+0000ca8e  scale_init                             
+0000caac  _c_int00_noargs                        
+0000cac8  uart_out                               
+0000cae4  WDT_ISR                                
+0000cafc  __TI_ISR_TRAP                          
+0000cb04  C$$EXIT                                
+0000cb04  abort                                  
+0000cb0a  init_gpio_unused                       
+0000cb10  _system_pre_init                       
+0000cb14  _system_post_cinit                     
 0000ffda  __TI_int41                             
 0000ffdc  __TI_int42                             
 0000ffde  __TI_int43                             
@@ -1430,4 +1433,4 @@ ffffffff  __TI_prof_data_size
 ffffffff  __TI_prof_data_start                   
 ffffffff  __c_args__                             
 
-[554 symbols]
+[555 symbols]

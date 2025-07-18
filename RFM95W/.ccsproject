@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?ccsproject version="1.0"?>
+<projectOptions>
+	<ccsVariant value="50:Theia-based"/>
+	<ccsVersion value="70.0.0"/>
+	<deviceFamily value="MSP430"/>
+	<executableActions value=""/>
+	<createSlaveProjects value=""/>
+	<templateProperties value="id=msp430fr2433_gc_simple_json.projectspec.RFM95W"/>
+	<connection value="common/targetdb/connections/TIMSP430-USB.xml"/>
+	<activeTargetConfiguration value="targetConfigs/MSP430FR2433.ccxml"/>
+	<origin value="/home/franc_italo/ti/msp430ware_3_80_14_01/gui_composer/examples/MSP-EXP430FR2433/streaming/gc_simple_json/ccs/msp430fr2433_gc_simple_json.projectspec"/>
+	<filesToOpen value=""/>
+</projectOptions>

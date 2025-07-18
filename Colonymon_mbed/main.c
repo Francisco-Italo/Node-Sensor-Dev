@@ -15,7 +15,6 @@
  * Global variables
  */
 volatile int wdt_cnt;                  // WDT
-volatile char func_flag;               // Switch for data collecting
 /**
  * Prototypes
  */
@@ -33,44 +32,40 @@ int main(void)
 
     i2c_init();
     uart_init();
-    acc_setup();
+    //acc_setup();
     gas_setup();
     scale_init();
 
     while(1)
     {
         __bis_SR_register(LPM3_bits | GIE);
-        /**
-         * TO-DO
-         * - Transmission to gateway
-         */
-        if(func_flag)
+        
+        char i;
+        unsigned long w = 0, t;
+
+        //acc_comm();
+        gas_comm();
+
+        SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
+        t = _pck.sensor_data._weight_pck.tare;
+        SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
+        for(i = 16; i > 0; --i)
         {
-            char i;
-            unsigned long w = 0, t;
-
-            acc_comm();
-            gas_comm();
-
-            SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
-            t = _pck.sensor_data._weight_pck.tare;
-            SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
-            for(i = 16; i > 0; --i)
-            {
-                w += scale_read();
-                w -= t;
-            }
-            w >>= 4;
-            SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
-            _pck.sensor_data._weight_pck.raw_weight = w;
-            SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
-
-            i = 10;
-            while(dht11_read() && --i);
-
-            uart_out(_pck.tx_block, sizeof(_pck.tx_block));
-            func_flag = 0;
+            w += scale_read();
+            w -= t;
         }
+        w >>= 4;
+        if(w > 0xFF00 && _pck.sensor_data._weight_pck.raw_weight < 0xFF00)
+        {
+            w &= 0x000000FF;
+        }
+        SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
+        _pck.sensor_data._weight_pck.raw_weight = w;
+        SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
+
+        while(dht11() != STATUS_OK);
+
+        uart_out(_pck.tx_block, sizeof(_pck.tx_block)); // Transmission to gateway
     }
 }
 /**
@@ -88,10 +83,9 @@ void __attribute__ ((interrupt(WDT_VECTOR))) WDT_ISR (void)
     wdt_cnt++;
     if(wdt_cnt == SLEEP_CONS)
     {
-        func_flag = 1;
         wdt_cnt = 0;
+        __bic_SR_register_on_exit(LPM3_bits);  // Exit LPM
     }
-    __bic_SR_register_on_exit(LPM3_bits);  // Exit LPM
 }
 /**
  * GPIO high-impedance cutting

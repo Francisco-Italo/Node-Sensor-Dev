@@ -1,0 +1,22 @@
+[
+   {
+      "directory" : "/home/franc_italo/workspace_ccstheia/UART_comm/Debug",
+      "command"   : "clang++ -I\"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/include\" -I\"/home/franc_italo/workspace_ccstheia/UART_comm\" -I\"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include\" -D__MSP430FR2433__",
+      "file"      : "/home/franc_italo/workspace_ccstheia/UART_comm/clk/clk.c"
+   },
+   {
+      "directory" : "/home/franc_italo/workspace_ccstheia/UART_comm/Debug",
+      "command"   : "clang++ -I\"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/include\" -I\"/home/franc_italo/workspace_ccstheia/UART_comm\" -I\"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include\" -D__MSP430FR2433__",
+      "file"      : "/home/franc_italo/workspace_ccstheia/UART_comm/main.c"
+   },
+   {
+      "directory" : "/home/franc_italo/workspace_ccstheia/UART_comm/Debug",
+      "command"   : "clang++ -I\"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/include\" -I\"/home/franc_italo/workspace_ccstheia/UART_comm\" -I\"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include\" -D__MSP430FR2433__",
+      "file"      : "/home/franc_italo/workspace_ccstheia/UART_comm/E32/E32.c"
+   },
+   {
+      "directory" : "/home/franc_italo/workspace_ccstheia/UART_comm/Debug",
+      "command"   : "clang++ -I\"/home/franc_italo/ti/ccs2002/ccs/ccs_base/msp430/include\" -I\"/home/franc_italo/workspace_ccstheia/UART_comm\" -I\"/home/franc_italo/ti/ccs2002/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include\" -D__MSP430FR2433__",
+      "file"      : "/home/franc_italo/workspace_ccstheia/UART_comm/uart/uart.c"
+   }
+]

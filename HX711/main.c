@@ -31,8 +31,25 @@ int main(void)
     tare >>= 4;
     SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
 
-    __bis_SR_register(LPM3_bits | GIE);     // Enter LPM3
-    __no_operation();                       // For debug
+    while (1)
+    {
+        __bis_SR_register(LPM3_bits | GIE);     // Enter LPM3
+        
+        SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
+        for(i = 16; i > 0; --i)
+        {
+            y = y+scale_read();
+            y = y-tare;
+        }
+        y >>= 4;
+        SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
+
+        uart_out(&y, sizeof(y));
+
+        SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
+        y ^= y;
+        SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
+    }
 }
 
 // Watchdog Timer interrupt service routine
@@ -45,19 +62,6 @@ void __attribute__ ((interrupt(WDT_VECTOR))) WDT_ISR (void)
 #error Compiler not supported!
 #endif
 {
-    SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
-    for(i = 16; i > 0; --i)
-    {
-        y = y+scale_read();
-        y = y-tare;
-    }
-    y >>= 4;
-    SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
-
-    uart_out(&y, sizeof(y));
-
-    SYSCFG0 = FRWPPW | DFWP;            // Program FRAM write enable
-    y ^= y;
-    SYSCFG0 = FRWPPW | PFWP | DFWP;     // Program FRAM write protected (not writable)
+    __bic_SR_register_on_exit(LPM3_bits);
 }
 // End of file
